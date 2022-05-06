@@ -30,20 +30,12 @@ class AlertController extends Controller
     public function index()
     {
         $alerts = $this->service->getAll();
+
         return response()->json([
             'alerts' => $alerts
         ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -55,10 +47,12 @@ class AlertController extends Controller
     {
         try {
             $dto = new AlertDto([
-                'title' => $request['title'],
+                'title'        => $request['title'],
                 'description'  => $request['description']
             ]);
+
             $this->service->post($dto);
+
             return response()->json([
                 'message' => "Alert created"
             ], 200);
@@ -78,25 +72,16 @@ class AlertController extends Controller
     public function show($id)
     {
         $alert = $this->service->getOne($id);
+
         if ($alert == null) {
             return response()->json([
                 'message' => 'Alert Not Found.'
             ], 404);
         }
+
         return response()->json([
             'alert' => $alert
         ], 200);
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
     }
 
     /**
@@ -110,11 +95,10 @@ class AlertController extends Controller
     {
         try {
             $dto = new AlertDto([
-                'id'    => $id,
-                'title' => $request['title'],
+                'id'           => $id,
+                'title'        => $request['title'],
                 'description'  => $request['description']
-            ]);;
-            printf(1);
+            ]);
 
             $res = $this->service->update($dto);
 
@@ -143,6 +127,7 @@ class AlertController extends Controller
     public function destroy($id)
     {
         $res = $this->service->delete($id);
+        
         if ($res == null) {
             return response()->json([
                 'message' => 'Alert not found'

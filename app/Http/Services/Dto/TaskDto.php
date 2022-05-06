@@ -33,20 +33,19 @@ class TaskDto extends AbstractDto implements DtoInterface
    */
   protected function map($data): bool
   {
-    // if (array_key_exists('id', $data)) {
-    //   $this->id     = $data['id'];
-    // } else {
-    //   $this->id     = null;
-    // }
-    $this->id = 1;
-    $this->title  = $data['title'];
+    if (array_key_exists('id', $data)) {
+      $this->id     = $data['id'];
+    } else {
+      $this->id     = null;
+    }
+    $this->title = $data['title'];
     if (array_key_exists('date', $data)) {
       $this->date = $data['date'];
     } else {
       $this->date = null;
     }
     $this->statusId = $data['statusId'];
-    $this->dzzId = $data['dzzId'];
+    $this->dzzId    = $data['dzzId'];
     if (array_key_exists('result', $data)) {
       $this->result = $data['result'];
     } else {

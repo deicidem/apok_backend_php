@@ -12,11 +12,11 @@ class Dzz extends Model
 
     protected $table = 'dzzs';
 
-    public function  processingLevel() {
+    public function processingLevel() {
         return $this->belongsTo(ProcessingLevel::class);
     }
 
-    public function  sensor() {
+    public function sensor() {
         return $this->belongsTo(Sensor::class);
     }
 
@@ -35,6 +35,6 @@ class Dzz extends Model
         'round',
         'route',
         'cloudinsess',
-        'description'
+        'description',
     ];
 }

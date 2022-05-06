@@ -26,30 +26,32 @@ class DzzService
 
         foreach ($dzzs as $dzz) {
             if (in_array(intval(date('m', strtotime($dzz->date))), $searchDto->months)) {
-                $file = Storage::get('files/2_ДЗЗ 2/снимок2.json');
-                $dzz_bounds = \GeoJson\GeoJson::jsonUnserialize(json_decode($file))->getGeometry()->getCoordinates()[0];
-                // get bbox
-                // print_r(\GeoJson\GeoJson::jsonUnserialize(json_decode($file))->getGeometry()->getBoundingBox());
 
-                $json = json_decode($searchDto->polygon);
-                $feature = \GeoJson\GeoJson::jsonUnserialize($json);
-                $polygon = $feature->getGeometry();
-                $bounds = $polygon->getCoordinates()[0];
-                printf(doHaveCross($dzz_bounds, $bounds) ? 'IN' : 'OUT');
-                
-                $dto = new DzzDto([
-                    'id'              => $dzz->id,
-                    "name"            => $dzz->name,
-                    "date"            => $dzz->date,
-                    "round"           => $dzz->round,
-                    "route"           => $dzz->route,
-                    "cloudiness"      => $dzz->cloudiness,
-                    "processingLevel" => $dzz->processingLevel->name,
-                    "sensor"          => $dzz->sensor->name,
-                    "files"           => $dzz->files,
-                    "tasks"           => $dzz->tasks
-                ]);
-                array_push($data, $dzz);
+                $json1      = json_decode($dzz->geography);
+                $dzz_bounds = \GeoJson\GeoJson::jsonUnserialize($json1)
+                    ->getGeometry()
+                    ->getCoordinates()[0];
+
+                $json2  = json_decode($searchDto->polygon, true);
+                $bounds = \GeoJson\GeoJson::jsonUnserialize($json2)
+                    ->getGeometry()
+                    ->getCoordinates()[0];
+
+                if (doHaveCross($dzz_bounds, $bounds)) {
+                    $dto = new DzzDto([
+                        'id'              => $dzz->id,
+                        "name"            => $dzz->name,
+                        "date"            => $dzz->date,
+                        "round"           => $dzz->round,
+                        "route"           => $dzz->route,
+                        "cloudiness"      => $dzz->cloudiness,
+                        "processingLevel" => $dzz->processingLevel->name,
+                        "sensor"          => $dzz->sensor->name,
+                        "previewPath"     => $dzz->files->where('file_type_id', 2)->first()->path,
+                        "geography"       => $dzz->geography
+                    ]);
+                    array_push($data, $dto);
+                }
             };
         }
 
@@ -82,11 +84,11 @@ function containsPoint($point, $polygon)
 {
     if ($polygon[0] != $polygon[count($polygon) - 1])
         $polygon[count($polygon)] = $polygon[0];
-    $j = 0;
-    $oddNodes = false;
-    $y = $point[0];
-    $x = $point[1];
-    $n = count($polygon);
+                 $j               = 0;
+                 $oddNodes        = false;
+                 $y               = $point[0];
+                 $x               = $point[1];
+                 $n               = count($polygon);
     for ($i = 0; $i < $n; $i++) {
         $j++;
         if ($j == $n) {

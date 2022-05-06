@@ -20,6 +20,8 @@ class File extends Model
     protected $fillable = [
         'name',
         'path',
+        'dzz_id',
+        'file_type_id'
     ];
 
 }

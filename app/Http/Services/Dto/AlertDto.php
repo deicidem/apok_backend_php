@@ -32,7 +32,8 @@ class AlertDto extends AbstractDto implements DtoInterface
     } else {
       $this->id = null;
     }
-    $this->title = $data['title'];
+
+    $this->title       = $data['title'];
     $this->description = $data['description'];
 
 

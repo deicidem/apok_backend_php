@@ -16,9 +16,9 @@ class PlanDto extends AbstractDto implements DtoInterface
   protected function configureValidatorRules(): array
   {
     return [
-      'id' => 'nullable',
+      'id'    => 'nullable',
       'title' => 'required',
-      'text' => 'required',
+      'text'  => 'required',
     ];
   }
 
@@ -33,7 +33,7 @@ class PlanDto extends AbstractDto implements DtoInterface
       $this->id = null;
     }
     $this->title = $data['title'];
-    $this->text = $data['text'];
+    $this->text  = $data['text'];
 
 
     return true;

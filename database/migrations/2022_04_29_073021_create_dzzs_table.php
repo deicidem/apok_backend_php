@@ -22,6 +22,7 @@ return new class extends Migration
             $table->integer('round');
             $table->integer('route');
             $table->integer('cloudiness');
+            $table->json('geography');
             $table->text('description');
             $table->foreignIdFor(Sensor::class);
             $table->foreignIdFor(ProcessingLevel::class);

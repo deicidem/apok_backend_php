@@ -13,10 +13,12 @@ class ImageController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        // $path = Storage::disk('local')->getDriver()->getAdapter()->applyPathPrefix('files/1_ДЗЗ 1/снимок1.png');
-        $file = Storage::get('files/1_ДЗЗ 1/снимок1.png');
+        $path = $request->all()['path'];
+        
+        $file = Storage::get($path);
+
         return (new Response($file, 200))->header('Content-Type', 'image/png');
     }
 

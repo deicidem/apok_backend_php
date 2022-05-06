@@ -30,20 +30,12 @@ class TaskController extends Controller
     public function index()
     {
         $tasks = $this->service->getAll();
+
         return response()->json([
             'tasks' => $tasks
         ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -51,16 +43,18 @@ class TaskController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(TaskStoreRequest $request)
+    public function store(Request $request)
     {
         try {
             $dto = new TaskDto([
-                'title'  => $request['title'],
+                'title'    => $request['title'],
                 'statusId' => $request['statusId'],
-                'dzzId' => $request['dzzId'],
-                'result' => $request['result'],
+                'dzzId'    => $request['dzzId'],
+                'result'   => $request['result'],
             ]);
+
             $this->service->post($dto);
+
             return response()->json([
                 'message' => "Task created"
             ], 200);
@@ -80,26 +74,18 @@ class TaskController extends Controller
     public function show($id)
     {
         $task = $this->service->getOne($id);
+
         if ($task == null) {
             return response()->json([
                 'message' => 'Task Not Found.'
             ], 404);
         }
+
         return response()->json([
             'task' => $task
         ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -112,11 +98,11 @@ class TaskController extends Controller
     {
         try {
             $dto = new TaskDto([
-                'id'     => $id,
-                'title'  => $request['title'],
+                'id'       => $id,
+                'title'    => $request['title'],
                 'statusId' => $request['statusId'],
-                'dzzId' => $request['dzzId'],
-                'result' => $request['result']
+                'dzzId'    => $request['dzzId'],
+                'result'   => $request['result']
             ]);;
 
             $res = $this->service->update($dto);
@@ -146,6 +132,7 @@ class TaskController extends Controller
     public function destroy($id)
     {
         $res = $this->service->delete($id);
+
         if ($res == null) {
             return response()->json([
                 'message' => 'Task not found'

@@ -19,8 +19,8 @@ class AlertService
       
       // array_push($result, new AlertDto(toArr($alert)));
       array_push($result, new AlertDto([
-        'id' => $alert->id,
-        'title' => $alert->title,
+        'id'          => $alert->id,
+        'title'       => $alert->title,
         'description' => $alert->description
       ]));
     };
@@ -35,7 +35,7 @@ class AlertService
     }
     // return new AlertDto(toArr($alert));
     return new AlertDto([
-      'title' => $alert->title,
+      'title'       => $alert->title,
       'description' => $alert->description
     ]);
   }

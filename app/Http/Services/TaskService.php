@@ -13,19 +13,18 @@ class TaskService
     public function getAll()
     {
       $tasks = Task::all();
-      
       $result = [];
       foreach ($tasks as $task) {
-        print_r($task);
         array_push($result, new TaskDto([
-          'id'     => $task->id,
-          'title'  => $task->title,
-          'date'   => $task->date,
-          'status' => $task->taskStatus->name,
-          'result' => $task->result,
+          'id'       => $task->id,
+          'title'    => $task->title,
+          'date'     => $task->created_at,
+          'statusId' => $task->task_status_id,
+          'dzzId'    => $task->dzz_id,
+          'result'   => $task->result,
         ]));
       };
-      return $tasks;
+      return $result;
     }
 
     public function getOne($id)
@@ -37,7 +36,7 @@ class TaskService
       $dto = new TaskDto([
         'id'       => $task->id,
         'title'    => $task->title,
-        'date'     => $task->date,
+        'date'     => $task->created_at,
         'statusId' => $task->task_status_id,
         'dzzId'    => $task->dzz_id,
         'result'   => $task->result,

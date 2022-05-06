@@ -13,7 +13,7 @@ class PlanService
 {
   public function getAll()
   {
-    $plans = Plan::all();
+    $plans  = Plan::all();
     $result = [];
     foreach ($plans as $plan) {
       array_push($result, new PlanDto([

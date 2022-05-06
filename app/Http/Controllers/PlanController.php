@@ -30,20 +30,12 @@ class PlanController extends Controller
     public function index()
     {
         $plans = $this->service->getAll();
+
         return response()->json([
             'plans' => $plans
         ], 200);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        //
-    }
 
     /**
      * Store a newly created resource in storage.
@@ -51,14 +43,16 @@ class PlanController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(PlanStoreRequest $request)
+    public function store(Request $request)
     {
         try {
             $dto = new PlanDto([
                 'title' => $request['title'],
                 'text'  => $request['text']
             ]);
+
             $this->service->post($dto);
+
             return response()->json([
                 'message' => "Plan created"
             ], 200);
@@ -78,26 +72,18 @@ class PlanController extends Controller
     public function show($id)
     {
         $plan = $this->service->getOne($id);
+
         if ($plan == null) {
             return response()->json([
                 'message' => 'Plan Not Found.'
             ], 404);
         }
+
         return response()->json([
             'plan' => $plan
         ], 200);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function edit($id)
-    {
-        //
-    }
 
     /**
      * Update the specified resource in storage.
@@ -106,15 +92,14 @@ class PlanController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(PlanStoreRequest $request, $id)
+    public function update(Request $request, $id)
     {
         try {
             $dto = new PlanDto([
                 'id'    => $id,
                 'title' => $request['title'],
                 'text'  => $request['text']
-            ]);;
-            printf(1);
+            ]);
 
             $res = $this->service->update($dto);
 
