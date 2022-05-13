@@ -53,17 +53,4 @@ class DzzDto extends AbstractDto implements DtoInterface
 
         return true;
     }
-
-     public function __toString() {
-       return [
-        'id'              => $this->id,
-        'name'            => $this->name,
-        'date'            => $this->date,
-        'round'           => $this->round,
-        'route'           => $this->route,
-        'cloudiness'      => $this->cloudiness,
-        'processingLevel' => $this->processingLevel,
-        'sensor'          => $this->sensor
-       ];
-     }
 }

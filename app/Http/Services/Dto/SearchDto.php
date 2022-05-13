@@ -14,7 +14,7 @@ class SearchDto extends AbstractDto implements DtoInterface
     public $endCloudiness;
     public $months;
     public $satelites;
-    public $polygon;
+    // public $polygon;
     /* @return array */
     protected function configureValidatorRules(): array
     {

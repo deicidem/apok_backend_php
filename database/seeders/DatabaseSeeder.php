@@ -112,25 +112,28 @@ class DatabaseSeeder extends Seeder
         ProcessingLevel::Create([
             'name' => 'Уровень 3'
         ]);
-
-        Dzz::Create([
-            'name'                => 'ДЗЗ 1',
-            'date'                => now(),
-            'round'               => 23121,
-            'route'               => 1,
-            'cloudiness'          => 10,
-            'geography'           => Storage::get('files/1_ДЗЗ 1/снимок1.json'),
-            'description'         => 'lorem ipsum',
-            'processing_level_id' => 1,
-            'sensor_id'           => 1
-        ]);
+        // $json1 = json_decode(Storage::get('files/1_ДЗЗ 1/снимок1.json'));
+        // $polygon1 = json_encode(\GeoJson\GeoJson::jsonUnserialize($json1)->getGeometry()->jsonSerialize());
+        // Dzz::Create([
+        //     'name'                => 'ДЗЗ 1',
+        //     'date'                => now(),
+        //     'round'               => 23121,
+        //     'route'               => 1,
+        //     'cloudiness'          => 10,
+        //     'geography'           => DB::raw("ST_GeomFromGeoJSON('$polygon1')"),
+        //     'description'         => 'lorem ipsum',
+        //     'processing_level_id' => 1,
+        //     'sensor_id'           => 1
+        // ]);
+        $json2 = json_decode(Storage::get('files/2_ДЗЗ 2/снимок2.json'));
+        $polygon2 = json_encode(\GeoJson\GeoJson::jsonUnserialize($json2)->getGeometry()->jsonSerialize());
         Dzz::Create([
             'name'                => 'ДЗЗ 2',
             'date'                => now(),
             'round'               => 23121,
             'route'               => 2,
             'cloudiness'          => 20,
-            'geography'           => Storage::get('files/2_ДЗЗ 2/снимок2.json'),
+            'geography'           => DB::raw("ST_GeomFromGeoJSON('$polygon2')"),
             'description'         => 'lorem ipsum',
             'processing_level_id' => 2,
             'sensor_id'           => 2

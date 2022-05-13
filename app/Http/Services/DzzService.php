@@ -27,17 +27,13 @@ class DzzService
         foreach ($dzzs as $dzz) {
             if (in_array(intval(date('m', strtotime($dzz->date))), $searchDto->months)) {
 
-                $json1      = json_decode($dzz->geography);
-                $dzz_bounds = \GeoJson\GeoJson::jsonUnserialize($json1)
-                    ->getGeometry()
-                    ->getCoordinates()[0];
+                $json  = json_decode($searchDto->polygon, true);
+                $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)
+                    ->getGeometry()->jsonSerialize());
 
-                $json2  = json_decode($searchDto->polygon, true);
-                $bounds = \GeoJson\GeoJson::jsonUnserialize($json2)
-                    ->getGeometry()
-                    ->getCoordinates()[0];
-
-                if (doHaveCross($dzz_bounds, $bounds)) {
+                $geography = Dzz::selectRaw('ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography, id')->whereRaw('id = ? and ST_Intersects(geography, ST_GeomFromGeoJSON(?))', [$dzz->id, $polygon])->get();
+                
+                if (true) {
                     $dto = new DzzDto([
                         'id'              => $dzz->id,
                         "name"            => $dzz->name,
@@ -48,7 +44,7 @@ class DzzService
                         "processingLevel" => $dzz->processingLevel->name,
                         "sensor"          => $dzz->sensor->name,
                         "previewPath"     => $dzz->files->where('file_type_id', 2)->first()->path,
-                        "geography"       => $dzz->geography
+                        "geography"       => json_decode($geography[0]->geography)
                     ]);
                     array_push($data, $dto);
                 }
@@ -59,36 +55,36 @@ class DzzService
     }
 }
 
-function doHaveCross($polygonInside, $polygonOutside) {
+function doHaveCross($polygonInside, $polygonOutside)
+{
     $contains = false;
     foreach ($polygonInside as $point) {
-       if(containsPoint($point, $polygonOutside)) {
-         $contains = true;
-         break;
-       }
+        if (containsPoint($point, $polygonOutside)) {
+            $contains = true;
+            break;
+        }
     }
     if ($contains) {
         return true;
     }
 
     foreach ($polygonOutside as $point) {
-        if(containsPoint($point, $polygonInside)) {
-         $contains = true;
-         break;
-       }
+        if (containsPoint($point, $polygonInside)) {
+            $contains = true;
+            break;
+        }
     }
     return $contains;
-    
 }
 function containsPoint($point, $polygon)
 {
     if ($polygon[0] != $polygon[count($polygon) - 1])
         $polygon[count($polygon)] = $polygon[0];
-                 $j               = 0;
-                 $oddNodes        = false;
-                 $y               = $point[0];
-                 $x               = $point[1];
-                 $n               = count($polygon);
+    $j               = 0;
+    $oddNodes        = false;
+    $y               = $point[0];
+    $x               = $point[1];
+    $n               = count($polygon);
     for ($i = 0; $i < $n; $i++) {
         $j++;
         if ($j == $n) {
@@ -96,7 +92,8 @@ function containsPoint($point, $polygon)
         }
 
         if ((($polygon[$i][0] < $y) && ($polygon[$j][0] >= $y)) ||
-             (($polygon[$j][0] < $y) && ($polygon[$i][0] >= $y))) {
+            (($polygon[$j][0] < $y) && ($polygon[$i][0] >= $y))
+        ) {
             if ($polygon[$i][1] + ($y - $polygon[$i][0]) / ($polygon[$j][0] - $polygon[$i][0]) * ($polygon[$j][1] - $polygon[$i][1]) < $x) {
                 $oddNodes = !$oddNodes;
             }
