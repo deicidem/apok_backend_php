@@ -15,6 +15,9 @@ class File extends Model
     public function dzz() {
         return $this->belongsTo(Dzz::class);
     }
+    public function plans() {
+        return $this->hasMany(Plan::class);
+    }
     protected $table = 'files';
 
     protected $fillable = [

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('path');
-            $table->foreignIdFor(Dzz::class);
+            $table->foreignIdFor(Dzz::class)->nullable();
             $table->foreignIdFor(FileType::class);
             $table->timestamps();
         });

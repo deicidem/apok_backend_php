@@ -16,10 +16,29 @@ class PlanService
     $plans  = Plan::all();
     $result = [];
     foreach ($plans as $plan) {
+      $requirements = [];
+      foreach ($plan->requirements as $req) {
+        array_push($requirements, [
+          'title'  => $req->title,
+          'description' => $req->description
+        ]);
+      }
+      $data = [];
+      foreach ($plan->data as $d) {
+        array_push($data, [
+          'title'  => $d->title,
+          'description' => $d->description,
+          'type' => $d->plan_data_type_id
+        ]);
+      }
       array_push($result, new PlanDto([
         'id'    => $plan->id,
         'title' => $plan->title,
-        'text'  => $plan->text
+        'excerpt' => $plan->excerpt,
+        'description'  => $plan->description,
+        'data' => $data,
+        'requirements' => $requirements,
+        'previewPath' => $plan->file->path
       ]));
     };
     return $result;
@@ -34,7 +53,7 @@ class PlanService
     return new PlanDto([
       'id'    => $plan->id,
       'title' => $plan->title,
-      'text'  => $plan->text
+      'description'  => $plan->description
     ]);
   }
 
@@ -47,7 +66,7 @@ class PlanService
     }
 
     $plan->title = $dto->title;
-    $plan->text  = $dto->text;
+    $plan->description  = $dto->description;
 
     $plan->save();
 
@@ -69,7 +88,7 @@ class PlanService
   {
     Plan::create([
       'title' => $dto->title,
-      'text'  => $dto->text
+      'description'  => $dto->description
     ]);
     return true;
   }

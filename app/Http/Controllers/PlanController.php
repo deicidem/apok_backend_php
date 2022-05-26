@@ -48,7 +48,7 @@ class PlanController extends Controller
         try {
             $dto = new PlanDto([
                 'title' => $request['title'],
-                'text'  => $request['text']
+                'description'  => $request['description']
             ]);
 
             $this->service->post($dto);
@@ -98,7 +98,7 @@ class PlanController extends Controller
             $dto = new PlanDto([
                 'id'    => $id,
                 'title' => $request['title'],
-                'text'  => $request['text']
+                'description'  => $request['description']
             ]);
 
             $res = $this->service->update($dto);
