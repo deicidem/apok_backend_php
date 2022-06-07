@@ -30,7 +30,7 @@ class DzzController extends Controller
         $params = $request->all();
 
         $searchDto = new SearchDto($params);
-        $data = $this->dzzService->get($searchDto);
+        $data      = $this->dzzService->get($searchDto);
 
         return response()->json([
             'dzzs' => $data

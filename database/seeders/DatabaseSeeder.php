@@ -16,6 +16,11 @@ use App\Models\SateliteType;
 use App\Models\Sensor;
 use App\Models\Spector;
 use App\Models\Task;
+use App\Models\TaskData;
+use App\Models\TaskDataType;
+use App\Models\TaskResult;
+use App\Models\TaskResultView;
+use App\Models\TaskResultViewType;
 use App\Models\TaskStatus;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -31,10 +36,10 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\User::factory(10)->create();
+        \App\Models\User:: factory(10)->create();
 
         \App\Models\User::factory()->create([
-            'name' => 'Test User',
+            'name'  => 'Test User',
             'email' => 'test@example.com',
         ]);
 
@@ -50,26 +55,26 @@ class DatabaseSeeder extends Seeder
 
         File::Create([
             'name'         => 'img.png',
-            'file_type_id' => 2,
+            'type_id' => 2,
             'path'         => 'files/Plan1/img.png',
+            'plan_id'      => 1
         ]);
         File::Create([
             'name'         => 'img.png',
-            'file_type_id' => 2,
+            'type_id' => 2,
             'path'         => 'files/Plan2/img.png',
+            'plan_id'      => 2
         ]);
 
         Plan::Create([
-            'title' => 'Формирование температурных карт 1',
-            'description'  => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий. Для определения температуры поверхности производятся вычисления спектральной интенсивности излучения, поверхностной яркостной температуры, спектрального коэффициента излучения, значений температур поверхности в градусах Цельсия. Результатом обработки является векторная карта температур и отчетная форма с информацией об используемом изображении. Для более наглядного представления результата используется универсальная температурная шкала [-100; +100]. Красным отображаются области высоких температур (очаги пожаров), синим – области низких температур.',
-            'excerpt' => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий.',
-            'file_id' => 1
+            'title'       => 'Формирование температурных карт 1',
+            'description' => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий. Для определения температуры поверхности производятся вычисления спектральной интенсивности излучения, поверхностной яркостной температуры, спектрального коэффициента излучения, значений температур поверхности в градусах Цельсия. Результатом обработки является векторная карта температур и отчетная форма с информацией об используемом изображении. Для более наглядного представления результата используется универсальная температурная шкала [-100; +100]. Красным отображаются области высоких температур (очаги пожаров), синим – области низких температур.',
+            'excerpt'     => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий.',
         ]);
         Plan::Create([
-            'title' => 'Формирование температурных карт 2',
-            'description'  => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий. Для определения температуры поверхности производятся вычисления спектральной интенсивности излучения, поверхностной яркостной температуры, спектрального коэффициента излучения, значений температур поверхности в градусах Цельсия. Результатом обработки является векторная карта температур и отчетная форма с информацией об используемом изображении. Для более наглядного представления результата используется универсальная температурная шкала [-100; +100]. Красным отображаются области высоких температур (очаги пожаров), синим – области низких температур.',
-            'excerpt' => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий.',
-            'file_id' => 2
+            'title'       => 'Формирование температурных карт 2',
+            'description' => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий. Для определения температуры поверхности производятся вычисления спектральной интенсивности излучения, поверхностной яркостной температуры, спектрального коэффициента излучения, значений температур поверхности в градусах Цельсия. Результатом обработки является векторная карта температур и отчетная форма с информацией об используемом изображении. Для более наглядного представления результата используется универсальная температурная шкала [-100; +100]. Красным отображаются области высоких температур (очаги пожаров), синим – области низких температур.',
+            'excerpt'     => 'Построение карты температур по тепловым каналам КА Landsat-8 производится с целью вычисления значений температур поверхности в градусах Цельсия, выявления тепловых аномалий.',
         ]);
 
         PlanDataType::Create([
@@ -80,62 +85,62 @@ class DatabaseSeeder extends Seeder
         ]);
 
         PlanData::Create([
-            'title' => 'Архивный снимок',
+            'title'             => 'Архивный снимок',
             'plan_data_type_id' => 1,
-            'plan_id' => 1
+            'plan_id'           => 1
         ]);
         PlanData::Create([
-            'title' => 'Актуальный снимок',
+            'title'             => 'Актуальный снимок',
             'plan_data_type_id' => 1,
-            'plan_id' => 1
+            'plan_id'           => 1
         ]);
         PlanData::Create([
-            'title' => 'Зона интереса',
+            'title'             => 'Зона интереса',
             'plan_data_type_id' => 2,
-            'plan_id' => 1
+            'plan_id'           => 1
         ]);
 
         PlanData::Create([
-            'title' => 'Снимок',
+            'title'             => 'Снимок',
             'plan_data_type_id' => 1,
-            'plan_id' => 2
+            'plan_id'           => 2
         ]);
         PlanData::Create([
-            'title' => 'Зона интереса',
+            'title'             => 'Зона интереса',
             'plan_data_type_id' => 2,
-            'plan_id' => 2
+            'plan_id'           => 2
         ]);
 
         PlanRequirement::Create([
-            'title' => 'Данные',
+            'title'       => 'Данные',
             'description' => 'мультиспектральные оптические материалы с космического аппарата (КА) Landsat 8.',
-            'plan_id' => 1
+            'plan_id'     => 1
         ]);
         PlanRequirement::Create([
-            'title' => 'Сезон съемки',
+            'title'       => 'Сезон съемки',
             'description' => 'с мая по сентябрь включительно',
-            'plan_id' => 1
+            'plan_id'     => 1
         ]);
         PlanRequirement::Create([
-            'title' => 'Облачность',
+            'title'       => 'Облачность',
             'description' => 'не более 20%',
-            'plan_id' => 1
+            'plan_id'     => 1
         ]);
 
         PlanRequirement::Create([
-            'title' => 'Данные',
+            'title'       => 'Данные',
             'description' => 'мультиспектральные оптические материалы с космического аппарата (КА) Landsat 1.',
-            'plan_id' => 2
+            'plan_id'     => 2
         ]);
         PlanRequirement::Create([
-            'title' => 'Сезон съемки',
+            'title'       => 'Сезон съемки',
             'description' => 'с февраля по август включительно',
-            'plan_id' => 2
+            'plan_id'     => 2
         ]);
         PlanRequirement::Create([
-            'title' => 'Облачность',
+            'title'       => 'Облачность',
             'description' => 'не более 30%',
-            'plan_id' => 2
+            'plan_id'     => 2
         ]);
 
         SateliteType::Create([
@@ -205,7 +210,32 @@ class DatabaseSeeder extends Seeder
         ProcessingLevel::Create([
             'name' => 'Уровень 3'
         ]);
-        $json1 = json_decode(Storage::get('files/1_ДЗЗ 1/снимок1.json'));
+
+        
+
+        File::Create([
+            'name'         => 'снимок1.png',
+            'type_id' => 2,
+            'path'         => 'files/1_ДЗЗ 1/снимок1.png',
+        ]);
+        File::Create([
+            'name'         => 'снимок2.png',
+            'type_id' => 2,
+            'path'         => 'files/2_ДЗЗ 2/снимок2.png',
+        ]);
+
+        File::Create([
+            'name'         => 'a',
+            'type_id' => 3,
+            'path'         => 'files/1_ДЗЗ 1',
+        ]);
+        File::Create([
+            'name'         => 'a',
+            'type_id' => 3,
+            'path'         => 'files/2_ДЗЗ 2',
+        ]);
+
+        $json1    = json_decode(Storage::get('files/1_ДЗЗ 1/снимок1.json'));
         $polygon1 = json_encode(\GeoJson\GeoJson::jsonUnserialize($json1)->getGeometry()->jsonSerialize());
         Dzz::Create([
             'name'                => 'ДЗЗ 1',
@@ -216,9 +246,11 @@ class DatabaseSeeder extends Seeder
             'geography'           => DB::raw("ST_GeomFromGeoJSON('$polygon1')"),
             'description'         => 'lorem ipsum',
             'processing_level_id' => 1,
-            'sensor_id'           => 1
+            'sensor_id'           => 1,
+            'preview_id' => 3,
+            'directory_id' => 5
         ]);
-        $json2 = json_decode(Storage::get('files/2_ДЗЗ 2/снимок2.json'));
+        $json2    = json_decode(Storage::get('files/2_ДЗЗ 2/снимок2.json'));
         $polygon2 = json_encode(\GeoJson\GeoJson::jsonUnserialize($json2)->getGeometry()->jsonSerialize());
         Dzz::Create([
             'name'                => 'ДЗЗ 2',
@@ -229,24 +261,11 @@ class DatabaseSeeder extends Seeder
             'geography'           => DB::raw("ST_GeomFromGeoJSON('$polygon2')"),
             'description'         => 'lorem ipsum',
             'processing_level_id' => 2,
-            'sensor_id'           => 2
+            'sensor_id'           => 2,
+            'preview_id' => 4,
+            'directory_id' => 6
         ]);
-
         
-
-        File::Create([
-            'name'         => 'снимок1.png',
-            'file_type_id' => 2,
-            'path'         => 'files/1_ДЗЗ 1/снимок1.png',
-            'dzz_id'       => 1
-        ]);
-        File::Create([
-            'name'         => 'снимок2.png',
-            'file_type_id' => 2,
-            'path'         => 'files/2_ДЗЗ 2/снимок2.png',
-            'dzz_id'       => 2
-        ]);
-
         TaskStatus::Create([
             'name' => 'Статус 1'
         ]);
@@ -257,23 +276,132 @@ class DatabaseSeeder extends Seeder
             'name' => 'Статус 3'
         ]);
 
+        TaskResult::Create([
+            'task_id' => 1
+        ]);
+        TaskResult::Create([
+            'task_id' => 2
+        ]);
+        TaskResult::Create([
+            'task_id' => 3
+        ]);
+
+        TaskResultViewType::Create([
+            'title' => 'raster'
+        ]);
+        TaskResultViewType::Create([
+            'title' => 'vector'
+        ]);
+
+        
+
+        File::Create([
+            'name'                => 'Отчет',
+            'type_id'        => 2,
+            'path'                => 'files/result/Отчет Мониторниг состояния посевов .jpg',
+            'task_result_view_id' => 1
+        ]);
+        File::Create([
+            'name'                => 'Подложка',
+            'type_id'        => 1,
+            'path'                => 'files/result/подложка.png',
+            'task_result_view_id' => 2
+        ]);
+        File::Create([
+            'name'                => 'Векторы',
+            'type_id'        => 1,
+            'path'                => 'files/result/векторы.png',
+            'task_result_view_id' => 3
+        ]);
+        File::Create([
+            'name'           => 'Отчет',
+            'type_id'   => 1,
+            'path'           => 'files/result/Отчет Мониторниг состояния посевов .jpg',
+            'task_result_id' => 1
+        ]);
+        File::Create([
+            'name'           => 'Подложка',
+            'type_id'   => 1,
+            'path'           => 'files/result/подложка.png',
+            'task_result_id' => 1
+        ]);
+        File::Create([
+            'name'           => 'Архив',
+            'type_id'   => 3,
+            'path'           => 'files/result',
+            'task_result_id' => 1
+        ]);
+
+        TaskResultView::Create([
+            'title'                    => 'Отчет',
+            'task_result_view_type_id' => 1,
+            'task_result_id'           => 1
+        ]);
+        $json3    = json_decode(Storage::get('files/result/preview.json'));
+        $polygon3 = json_encode(\GeoJson\GeoJson::jsonUnserialize($json3)->getFeatures()[0]->getGeometry()->jsonSerialize());
+        TaskResultView::Create([
+            'title'                    => 'Подложка',
+            'task_result_view_type_id' => 2,
+            'geography'                => DB::raw("ST_GeomFromGeoJSON('$polygon3')"),
+            'task_result_id'           => 1
+        ]);
+        TaskResultView::Create([
+            'title'                    => 'Векторы',
+            'task_result_view_type_id' => 2,
+            'geography'                => DB::raw("ST_GeomFromGeoJSON('$polygon3')"),
+            'task_result_id'           => 1
+        ]);
+
+        
         Task::Create([
             'title'          => 'Формирование температурных карт 1',
-            'result'         => null,
-            'dzz_id'         => 1,
-            'task_status_id' => 1
+            'plan_id'         => 1,
+            'task_status_id' => 1,
         ]);
         Task::Create([
             'title'          => 'Формирование температурных карт 2',
-            'result'         => null,
-            'dzz_id'         => 2,
-            'task_status_id' => 2
+            'plan_id'         => 1,
+            'task_status_id' => 2,
         ]);
         Task::Create([
             'title'          => 'Формирование температурных карт 3',
-            'result'         => null,
-            'dzz_id'         => 3,
-            'task_status_id' => 3
+            'plan_id'         => 2,
+            'task_status_id' => 3,
+        ]);
+
+        
+        TaskDataType::Create([
+            'title' => 'Текст',
+        ]);
+        TaskDataType::Create([
+            'title' => 'Снимок',
+        ]);
+        TaskDataType::Create([
+            'title' => 'Вектор',
+        ]);
+
+        TaskData::Create([
+            'title' => 'Архивный снимок',
+            'task_id' => 1,
+            'task_data_type_id' => 2,
+            'file_id' => 3,
+            'plan_data_id' => 1
+        ]);
+        TaskData::Create([
+            'title' => 'Актуальный снимок',
+            'task_id' => 1,
+            'task_data_type_id' => 2,
+            'file_id' => 4,
+            'plan_data_id' => 2
+        ]);
+        $json3    = json_decode(Storage::get('files/result/preview.json'));
+        $polygon3 = json_encode(\GeoJson\GeoJson::jsonUnserialize($json3)->getFeatures()[0]->getGeometry()->jsonSerialize());
+        TaskData::Create([
+            'title' => 'Зона интереса',
+            'task_id' => 1,
+            'task_data_type_id' => 3,
+            'geography' =>  DB::raw("ST_GeomFromGeoJSON('$polygon3')"),
+            'plan_data_id' => 3
         ]);
 
         Alert::Create(

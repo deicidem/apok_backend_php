@@ -2,83 +2,234 @@
 
 namespace App\Http\Services;
 
+use App\Http\Services\Dto\TaskOutputDto;
 use App\Models\Task;
-use App\Http\Services\Dto\DtoInterface;
-use App\Http\Services\Dto\DzzDto;
-use App\Http\Services\Dto\TaskDto;
-use App\Http\Services\Dto\SearchDto;
+use App\Http\Services\Dto\TaskInputDto;
+use App\Models\Dzz;
+use App\Models\File;
+use App\Models\Plan;
+use App\Models\PlanData;
+use App\Models\TaskData;
+use App\Models\TaskResultView;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
+
 class TaskService
 {
-    public function getAll()
-    {
-      $tasks = Task::all();
-      $result = [];
-      foreach ($tasks as $task) {
-        array_push($result, new TaskDto([
-          'id'       => $task->id,
-          'title'    => $task->title,
-          'date'     => $task->created_at,
-          'statusId' => $task->task_status_id,
-          'dzzId'    => $task->dzz_id,
-          'result'   => $task->result,
-        ]));
-      };
-      return $result;
-    }
-
-    public function getOne($id)
-    {
-      $task = Task::find($id);
-      if (!$task) {
-          return null;
-      }
-      $dto = new TaskDto([
-        'id'       => $task->id,
-        'title'    => $task->title,
-        'date'     => $task->created_at,
-        'statusId' => $task->task_status_id,
-        'dzzId'    => $task->dzz_id,
-        'result'   => $task->result,
-      ]);
-      return $dto;
-    }
-
-    public function update(TaskDto $dto)
-    {
-      
-      $task = Task::find($dto->id);
-      if (!$task) {
-        return null;
-      }
-      $task->title          = $dto->title;
-      $task->task_status_id = $dto->statusId;
-      $task->dzz_id         = $dto->dzzId;
-      $task->result         = $dto->result;
-      $task->save();
-
-      return true;
-    }
-
-    public function delete($id)
-    {
-      $task = Task::find($id);
-        if (!$task) {
-            return null;
+  public function getAll()
+  {
+    $tasks  = Task::all();
+    $result = [];
+    
+    foreach ($tasks as $task) {
+      $taskResultFiles = [];
+      $taskResultViews = [];
+      if ($task->result != null) {
+        if ($task->result->files != null) {
+          foreach ($task->result->files as $file) {
+            array_push($taskResultFiles, [
+              'id'   => $file->id,
+              'name' => $file->name,
+            ]);
+          }
         }
-        $task->delete();
+        
+        if ($task->result->views != null) {
+          foreach ($task->result->views as $view) {
+            $geography = null;
+    
+            if ($view->task_result_view_type_id == 2) {
+              $geographyRaw = TaskResultView::selectRaw('ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography, id')->where('id', $view->id)->get();
+              $geography    = json_decode($geographyRaw[0]->geography);
+            }
+            
+            array_push($taskResultViews, [
+              'id'          => $view->id,
+              'title'       => $view->title,
+              'type'        => $view->task_result_view_type_id,
+              'previewPath' => $view->file->path,
+              'geography'   => $geography
+            ]);
+          }
+        }
+      }
+      
+      
+      array_push($result, new TaskOutputDto([
+        'id'     => $task->id,
+        'title'  => $task->title,
+        'date'   => $task->created_at,
+        'status' => $task->taskStatus->name,
+        'result' => [
+          'views' => $taskResultViews,
+          'files' => $taskResultFiles
+        ]
+      ]));
+    };
+    return $result;
+  }
 
-        return true;
+  public function getOne($id)
+  {
+    $task = Task::find($id);
+    if (!$task) {
+      return null;
+    }
+    $dto = new TaskOutputDto([
+      'id'       => $task->id,
+      'title'    => $task->title,
+      'date'     => $task->created_at,
+      'statusId' => $task->task_status_id,
+      'dzzId'    => $task->dzz_id,
+      'result'   => $task->result,
+    ]);
+    return $dto;
+  }
+
+  public function update(TaskOutputDto $dto)
+  {
+
+    $task = Task::find($dto->id);
+    if (!$task) {
+      return null;
+    }
+    $task->title          = $dto->title;
+    $task->task_status_id = $dto->statusId;
+    $task->dzz_id         = $dto->dzzId;
+    $task->result         = $dto->result;
+    $task->save();
+
+    return true;
+  }
+
+  public function delete($id)
+  {
+    $task = Task::find($id);
+    if (!$task) {
+      return null;
+    }
+    $task->delete();
+
+    return true;
+  }
+
+  public function post(TaskInputDto $dto)
+  {
+    $task    = Task::Create([
+      'title'          => 'a',
+      'task_status_id' => 1,
+      'plan_id'        => $dto->planId
+    ]);
+    $taskId = $task->id;
+
+    if ($dto->params != null) {
+      foreach ($dto->params as $key => $param) {
+        
+        TaskData::Create([
+          'task_id'           => $taskId,
+          'task_data_type_id' => 1,
+          'title'             => PlanData::Find($dto->links->params[$key])->title,
+          'text'              => $param,
+          'plan_data_id' => $dto->links->params[$key]
+        ]);
+      }
     }
 
-    public function post(TaskDto $dto)
-    {
-      Task::create([
-        'title'          => $dto->title,
-        'result'         => $dto->result,
-        'dzz_id'         => $dto->dzzId,
-        'task_status_id' => $dto->statusId
-      ]);
-      return true;
+    if ($dto->dzzs != null) {
+      foreach ($dto->dzzs as $key => $dzzId) {
+        $file = DB::table('files')
+          ->where('dzz_id', $dzzId)
+          ->where('file_id', 2)
+          ->first();
+  
+        TaskData::Create([
+          'task_id'           => $taskId,
+          'task_data_type_id' => 1,
+          'title'             => PlanData::Find($dto->links->dzzs[$key])->title,
+          'file_id'           => $file->id,
+          'plan_data_id' => $dto->links->dzzs[$key]
+        ]);
+      }
     }
+
+    if ($dto->files != null) {
+      foreach ($dto->files as $key => $file) {
+        $directory = 'b';
+        $name = $file->getClientOriginalName();
+        $path = Storage::putFileAs($directory, $file, $name);
+        
+        if ($file->extension() == "zip") {
+          $zip = new \ZipArchive; 
+          printf(Storage::path($directory));
+          $res = $zip->open(Storage::path($path)); 
+          if ($res === TRUE) { 
+            $zip->extractTo(Storage::path($directory)); 
+            $zip->close(); 
+          }
+          Storage::delete($path);
+
+          $file = File::Create([
+            'name'         => $name,
+            'path'         => $directory,
+            'type_id' => 3,
+          ]);
+  
+          Dzz::Create([
+            'name' => 'new Dzz',
+            'directory_id' => $file->id
+          ]);
+    
+          TaskData::Create([
+            'task_id'           => $taskId,
+            'task_data_type_id' => 1,
+            'title'             => PlanData::Find($dto->links->files[$key])->title,
+            'file_id'           => $file->id,
+            'plan_data_id' => $dto->links->files[$key]
+          ]);
+
+        } else {
+          $file = File::Create([
+            'name'         => $name,
+            'path'         => $path,
+            'type_id' => 3,
+          ]);
+  
+          Dzz::Create([
+            'name' => 'new Dzz',
+            'directory_id' => $file->id
+          ]);
+    
+          TaskData::Create([
+            'task_id'           => $taskId,
+            'task_data_type_id' => 1,
+            'title'             => PlanData::Find($dto->links->files[$key])->title,
+            'file_id'           => $file->id,
+            'plan_data_id' => $dto->links->files[$key]
+          ]);
+        }
+      }
+    }
+    
+    
+
+    if ($dto->vectors != null) {
+      foreach ($dto->vectors as $key => $vector) {
+        $json    = json_decode($vector, true);
+        $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)
+          ->getGeometry()->jsonSerialize());
+  
+        TaskData::Create([
+          'task_id'           => $taskId,
+          'task_data_type_id' => 3,
+          'title'             => PlanData::Find($dto->links->vectors[$key])->title,
+          'geography'         => DB::raw("ST_GeomFromGeoJSON('$polygon')"),
+          'plan_data_id' => $dto->links->vectors[$key]
+        ]);
+      }
+    }
+    
+
+    return true;
+  }
 }

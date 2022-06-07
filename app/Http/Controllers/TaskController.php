@@ -6,16 +6,14 @@ use App\Models\Task;
 use App\Http\Services\TaskService;
 use Illuminate\Http\Request;
 use App\Http\Requests\TaskStoreRequest;
-use App\Http\Services\Dto\TaskDto;
+use App\Http\Services\Dto\FileDto;
+use App\Http\Services\Dto\TaskInputDto;
+use App\Http\Services\FileService;
+use App\Models\Dzz;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-
     protected $service;
     /**
      * Display a listing of the resource.
@@ -46,11 +44,17 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         try {
-            $dto = new TaskDto([
-                'title'    => $request['title'],
-                'statusId' => $request['statusId'],
-                'dzzId'    => $request['dzzId'],
-                'result'   => $request['result'],
+            $params = $request->all();
+            print_r($params);
+
+
+            $dto = new TaskInputDto([
+                'dzzs'    => $request['dzzs'],
+                'planId'  => $request['planId'],
+                'vectors' => $request['vectors'],
+                'files'   => $request['files'],
+                'params'  => $request['params'],
+                'links'   => json_decode($request['links']),
             ]);
 
             $this->service->post($dto);
@@ -97,21 +101,21 @@ class TaskController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $dto = new TaskDto([
-                'id'       => $id,
-                'title'    => $request['title'],
-                'statusId' => $request['statusId'],
-                'dzzId'    => $request['dzzId'],
-                'result'   => $request['result']
-            ]);;
+            // $dto = new TaskOutputDto([
+            //     'id'       => $id,
+            //     'title'    => $request['title'],
+            //     'statusId' => $request['statusId'],
+            //     'dzzId'    => $request['dzzId'],
+            //     'result'   => $request['result']
+            // ]);;
 
-            $res = $this->service->update($dto);
+            // $res = $this->service->update($dto);
 
-            if ($res == null) {
-                return response()->json([
-                    'message' => 'Task not found'
-                ], 404);
-            }
+            // if ($res == null) {
+            //     return response()->json([
+            //         'message' => 'Task not found'
+            //     ], 404);
+            // }
 
             return response()->json([
                 'message' => "Task successfully updated"

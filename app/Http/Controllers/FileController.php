@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\Dto\FileDto;
 use App\Http\Services\FileService;
+use App\Models\Dzz;
+use App\Models\File;
+use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-
 class FileController extends Controller
 {
     protected $service;
@@ -38,23 +40,73 @@ class FileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
+    function processFile($request, $fileName) {
+        $path   = $request->file($fileName)->storeAs('b', $fileName . '.json');
+        $params = $request->all();
+
+        $dzz = Dzz::Create([
+            'name' => 'new Dzz'
+        ]);
+
+        $dto = new FileDto([
+            'name'       => $fileName,
+            'path'       => $path,
+            'dzzId'      => $dzz->id,
+            'fileTypeId' => $params['fileTypeId']
+        ]);
+        $this->service->post($dto);
+    }
     public function store(Request $request)
     {
         try {
-            $_FILENAME = "file";
-            $path      = $request->file('file')->storeAs('b', $_FILENAME);
-            $params    = $request->all();
+            $res    = [];
+            $params = $request->all();
+            foreach ($request->files as $file) {
+                array_push($res, $file->getSize());
+                
+                $name = $file->getClientOriginalName();
+                $path = Storage::putFileAs('b', $file, $name);
 
-            $dto = new FileDto([
-                'name'       => $_FILENAME,
-                'path'       => $path,
-                'dzzId'      => $params['dzzId'],
-                'fileTypeId' => $params['fileTypeId']
-            ]);
-            $this->service->post($dto);
+                $dzz = Dzz::Create([
+                    'name' => 'new Dzz'
+                ]);
+        
+        
+                $dto = new FileDto([
+                    'name'       => $name,
+                    'path'       => $path,
+                    'dzzId'      => $dzz->id,
+                    'fileTypeId' => $params['fileTypeId']
+                ]);
+                $this->service->post($dto);
+            }
+
+            // if ($request->hasFile('dzz_archive')) {
+            //     FileController::processFile($request, 'dzz_archive');
+            // }
+            // if ($request->hasFile('dzz_actual')) {
+            //     FileController::processFile($request, 'dzz_actual');
+            // }
+            // $path      = $request->file('file')->storeAs('b', $_FILENAME);
+            // $params    = $request->all();
+
+
+
+            // $dzz = Dzz::Create([
+            //     'name' => 'new Dzz'
+            // ]);
+
+
+            // $dto = new FileDto([
+            //     'name'       => $_FILENAME,
+            //     'path'       => $path,
+            //     'dzzId'      => $dzz->id,
+            //     'fileTypeId' => $params['fileTypeId']
+            // ]);
+            // $this->service->post($dto);
 
             return response()->json([
-                'message' => "Plan created"
+                'message' => "File created"
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -62,7 +114,7 @@ class FileController extends Controller
             ], 500);
         }
     }
-
+    
     /**
      * Display the specified resource.
      *
@@ -141,5 +193,59 @@ class FileController extends Controller
         return response()->json([
             'message' => "Plan successfully deleted"
         ], 200);
+    }
+
+    public function polygon(Request $request) {
+        $file = $request->file('file');
+        $data = $file->openFile()->fread($file->getSize());
+        return response()->json([
+            'file' => json_decode($data)
+        ], 200);
+    }
+
+    public function download(Request $request) {
+        $file = File::find($request['fileId']);
+        if ($file->type_id == 3) {
+            $zip_file = 'archive.zip';
+            $zip = new \ZipArchive();
+
+            if ($zip->open(public_path($zip_file), \ZipArchive::CREATE) === TRUE)
+            {
+                $path = Storage::path($file->path);
+                $iterator = new \RecursiveIteratorIterator(
+                    new \RecursiveDirectoryIterator(
+                        $path,
+                        \FilesystemIterator::FOLLOW_SYMLINKS
+                    ),
+                    \RecursiveIteratorIterator::SELF_FIRST
+                );
+            
+                while ($iterator->valid()) {
+                    if (!$iterator->isDot()) {
+                        $filePath = $iterator->getPathName();
+                        $relativePath = substr($filePath, strlen($path) + 1);
+            
+                        if (!$iterator->isDir()) {
+                            $zip->addFile($filePath, $relativePath);
+                        } else {
+                            if ($relativePath !== false) {
+                                $zip->addEmptyDir($relativePath);
+                            }
+                        }
+                    }
+                    $iterator->next();
+                }
+                // $files = Storage::allFiles($file->path);
+                // foreach ($files as $filePath) {
+                //     $path = Storage::path($filePath);
+                //     $zip->addFile($path, basename($path));
+                // }
+
+                $zip->close();
+            }
+            return response()->download(public_path($zip_file))->deleteFileAfterSend(true);
+        } else {
+            return response()->download(Storage::path($file->path));
+        }
     }
 }

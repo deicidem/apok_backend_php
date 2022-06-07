@@ -13,10 +13,19 @@ class File extends Model
         return $this->belongsTo(FileType::class);
     }
     public function dzz() {
-        return $this->belongsTo(Dzz::class);
+        return $this->hasOne(Dzz::class);
     }
-    public function plans() {
-        return $this->hasMany(Plan::class);
+    public function plan() {
+        return $this->belongsTo(Plan::class);
+    }
+    public function taskResult() {
+        return $this->belongsTo(TaskResult::class);
+    }
+    public function taskResultView() {
+        return $this->belongsTo(TaskResultView::class);
+    }
+    public function taskData() {
+        return $this->hasMany(TaskData::class);
     }
     protected $table = 'files';
 
@@ -24,7 +33,7 @@ class File extends Model
         'name',
         'path',
         'dzz_id',
-        'file_type_id'
+        'type_id',
     ];
 
 }

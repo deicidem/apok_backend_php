@@ -21,22 +21,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 // Route::get('plans', "PlanController@index");
-// // Route::post('posts', "PlanController@store");
+Route::post('files/polygon', [FileController::class, 'polygon']);
+Route::get('files/download', [FileController::class, 'download']);
 // // Route::get('plans/{id}', "PlanController@show");
 // // Route::put('plans/{id', "PlanController@update");
 // // Route::delete('plans/{id}', "PlanController@destroy");
   // Route::post('register', [AuthController::class, 'register']);
   // Route::post('token', [AuthController::class, 'token']);
   Route::post('login', [AuthController::class, 'authenticate']);
-Route::middleware('auth:sanctum')->get('name', function (Request $request) {
-  return response()->json(['name' => $request->user()->name]);
-});
+// Route::middleware('auth:sanctum')->get('name', function (Request $request) {
+//   return response()->json(['name' => $request->user()->name]);
+// });
 Route::resource('plans', PlanController::class);
 Route::resource('images', ImageController::class);
 Route::resource('dzzs', DzzController::class);
-
-Route::group(['middleware' => 'auth:sanctum'], function () {
-  Route::resource('files', FileController::class);
-  Route::resource('alerts', AlertController::class);
-  Route::resource('tasks', TaskController::class);
-});
+Route::resource('files', FileController::class);
+Route::resource('alerts', AlertController::class);
+Route::resource('tasks', TaskController::class);
+// Route::group(['middleware' => 'auth:sanctum'], function () {
+  
+// });

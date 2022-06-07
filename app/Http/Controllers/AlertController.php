@@ -47,8 +47,8 @@ class AlertController extends Controller
     {
         try {
             $dto = new AlertDto([
-                'title'        => $request['title'],
-                'description'  => $request['description']
+                'title'       => $request['title'],
+                'description' => $request['description']
             ]);
 
             $this->service->post($dto);
@@ -95,9 +95,9 @@ class AlertController extends Controller
     {
         try {
             $dto = new AlertDto([
-                'id'           => $id,
-                'title'        => $request['title'],
-                'description'  => $request['description']
+                'id'          => $id,
+                'title'       => $request['title'],
+                'description' => $request['description']
             ]);
 
             $res = $this->service->update($dto);

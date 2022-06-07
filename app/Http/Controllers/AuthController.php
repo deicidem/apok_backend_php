@@ -13,7 +13,7 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);
         // 1
@@ -22,9 +22,9 @@ class AuthController extends Controller
         }
         // 2    
 
-        $input = $request->all();
+               $input      = $request->all();
         $input['password'] = bcrypt($input['password']);
-        $user = User::create($input);
+               $user       = User::create($input);
         // 3    
 
         $token = $user->createToken($request->email)->plainTextToken;
@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function token(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => ['required', 'string', 'email', 'max:255'],
+            'email'    => ['required', 'string', 'email', 'max:255'],
             'password' => ['required', 'string', 'min:8'],
         ]);
 
@@ -57,7 +57,7 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
         $credentials = $request->validate([
-            'email' => ['required', 'email'],
+            'email'    => ['required', 'email'],
             'password' => ['required'],
         ]);
         if (Auth::attempt($credentials, true)) {

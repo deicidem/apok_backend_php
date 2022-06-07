@@ -18,14 +18,18 @@ return new class extends Migration
         Schema::create('dzzs', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->date('date');
-            $table->integer('round');
-            $table->integer('route');
-            $table->integer('cloudiness');
-            $table->multipolygon('geography');
-            $table->text('description');
-            $table->foreignIdFor(Sensor::class);
-            $table->foreignIdFor(ProcessingLevel::class);
+            $table->date('date')->nullable();
+            $table->integer('round')->nullable();
+            $table->integer('route')->nullable();
+            $table->integer('cloudiness')->nullable();
+            $table->text('description')->nullable();
+            $table->foreignIdFor(Sensor::class)->nullable();
+            $table->foreignIdFor(ProcessingLevel::class)->nullable();
+            $table->unsignedBigInteger('preview_id')->nullable();
+            $table->unsignedBigInteger('directory_id');           
+            $table->foreign('preview_id')->references('id')->on('files');
+            $table->foreign('directory_id')->references('id')->on('files');
+            $table->multipolygon('geography')->nullable();
             $table->timestamps();
         });
     }
@@ -37,6 +41,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('dzzs');
+        Schema:: dropIfExists('dzzs');
     }
 };

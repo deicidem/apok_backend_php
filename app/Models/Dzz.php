@@ -20,8 +20,11 @@ class Dzz extends Model
         return $this->belongsTo(Sensor::class);
     }
 
-    public function files() {
-        return $this->hasMany(File::class);
+    public function directory() {
+        return $this->belongsTo(File::class, 'directory_id');
+    }
+    public function preview() {
+        return $this->belongsTo(File::class, 'preview_id');
     }
 
     public function tasks() {
@@ -36,5 +39,7 @@ class Dzz extends Model
         'route',
         'cloudinsess',
         'description',
+        'preview_id',
+        'directory_id',
     ];
 }

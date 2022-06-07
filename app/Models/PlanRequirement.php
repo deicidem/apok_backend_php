@@ -9,7 +9,7 @@ class PlanRequirement extends Model
 {
     use HasFactory;
 
-    public function data() {
+    public function plan() {
         return $this->belongsTo(Plan::class);
     }
 

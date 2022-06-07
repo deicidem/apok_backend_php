@@ -19,6 +19,7 @@ class PlanService
       $requirements = [];
       foreach ($plan->requirements as $req) {
         array_push($requirements, [
+          'id' => $req->id,
           'title'  => $req->title,
           'description' => $req->description
         ]);
@@ -26,6 +27,7 @@ class PlanService
       $data = [];
       foreach ($plan->data as $d) {
         array_push($data, [
+          'id' => $d->id,
           'title'  => $d->title,
           'description' => $d->description,
           'type' => $d->plan_data_type_id

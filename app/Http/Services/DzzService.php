@@ -27,13 +27,12 @@ class DzzService
         foreach ($dzzs as $dzz) {
             if (in_array(intval(date('m', strtotime($dzz->date))), $searchDto->months)) {
 
-                $json  = json_decode($searchDto->polygon, true);
+                $json    = json_decode($searchDto->polygon, true);
                 $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)
                     ->getGeometry()->jsonSerialize());
 
                 $geography = Dzz::selectRaw('ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography, id')->whereRaw('id = ? and ST_Intersects(geography, ST_GeomFromGeoJSON(?))', [$dzz->id, $polygon])->get();
-                
-                if (true) {
+                if (count($geography) != 0) {
                     $dto = new DzzDto([
                         'id'              => $dzz->id,
                         "name"            => $dzz->name,
@@ -43,7 +42,7 @@ class DzzService
                         "cloudiness"      => $dzz->cloudiness,
                         "processingLevel" => $dzz->processingLevel->name,
                         "sensor"          => $dzz->sensor->name,
-                        "previewPath"     => $dzz->files->where('file_type_id', 2)->first()->path,
+                        "previewPath"     => $dzz->preview->path,
                         "geography"       => json_decode($geography[0]->geography)
                     ]);
                     array_push($data, $dto);
@@ -80,11 +79,11 @@ function containsPoint($point, $polygon)
 {
     if ($polygon[0] != $polygon[count($polygon) - 1])
         $polygon[count($polygon)] = $polygon[0];
-    $j               = 0;
-    $oddNodes        = false;
-    $y               = $point[0];
-    $x               = $point[1];
-    $n               = count($polygon);
+                 $j               = 0;
+                 $oddNodes        = false;
+                 $y               = $point[0];
+                 $x               = $point[1];
+                 $n               = count($polygon);
     for ($i = 0; $i < $n; $i++) {
         $j++;
         if ($j == $n) {

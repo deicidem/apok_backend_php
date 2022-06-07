@@ -18,7 +18,11 @@ class Plan extends Model
     }
 
     public function file() {
-        return $this->belongsTo(File::class);
+        return $this->hasOne(File::class);
+    }
+
+    public function tasks() {
+        return $this->hasMany(Task::class);
     }
 
     protected $table = 'plans';

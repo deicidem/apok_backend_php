@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('sensors', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description');
+            $table->string('description')->nullable();
             $table->foreignIdFor(Satelite::class);
             $table->timestamps();
         });
