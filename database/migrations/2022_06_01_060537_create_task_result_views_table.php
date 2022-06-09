@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\File;
 use App\Models\TaskResult;
 use App\Models\TaskResultViewType;
 use Illuminate\Database\Migrations\Migration;
@@ -18,8 +19,9 @@ return new class extends Migration
         Schema::create('task_result_views', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignIdFor(TaskResultViewType::class);
+            $table->foreignIdFor(TaskResultViewType::class, 'type_id');
             $table->foreignIdFor(TaskResult::class);
+            $table->foreignIdFor(File::class, 'preview_id');
             $table->polygon('geography')->nullable();
             $table->timestamps();
         });

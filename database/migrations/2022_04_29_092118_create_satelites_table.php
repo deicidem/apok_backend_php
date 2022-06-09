@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('description');
-            $table->foreignIdFor(SateliteType::class);
+            $table->foreignIdFor(SateliteType::class, 'type_id');
             $table->timestamps();
         });
     }

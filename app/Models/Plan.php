@@ -17,8 +17,8 @@ class Plan extends Model
         return $this->hasMany(PlanRequirement::class);
     }
 
-    public function file() {
-        return $this->hasOne(File::class);
+    public function preview() {
+        return $this->belongsTo(File::class, 'preview_id');
     }
 
     public function tasks() {
@@ -30,6 +30,7 @@ class Plan extends Model
     protected $fillable = [
         'title',
         'description',
-        'excerpt'
+        'excerpt',
+        'preview_id'
     ];
 }

@@ -37,7 +37,7 @@ Route::resource('images', ImageController::class);
 Route::resource('dzzs', DzzController::class);
 Route::resource('files', FileController::class);
 Route::resource('alerts', AlertController::class);
-Route::resource('tasks', TaskController::class);
-// Route::group(['middleware' => 'auth:sanctum'], function () {
+Route::group(['middleware' => 'auth:sanctum'], function () {
+  Route::resource('tasks', TaskController::class);
   
-// });
+});

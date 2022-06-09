@@ -14,13 +14,14 @@ class Satelite extends Model
     }
 
     public function type() {
-        return $this->belongsTo(SateliteType::class);
+        return $this->belongsTo(SateliteType::class, 'type_id');
     }
 
     protected $table = "satelites";
 
     protected $fillable = [
         'name',
-        'description'
+        'description',
+        'type_id'
     ];
 }

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->foreignIdFor(Plan::class);
-            $table->foreignIdFor(TaskStatus::class);
+            $table->foreignIdFor(TaskStatus::class, 'status_id');
             
             $table->timestamps();
         });

@@ -9,6 +9,7 @@ use App\Models\File;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+
 class FileController extends Controller
 {
     protected $service;
@@ -40,7 +41,8 @@ class FileController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    function processFile($request, $fileName) {
+    function processFile($request, $fileName)
+    {
         $path   = $request->file($fileName)->storeAs('b', $fileName . '.json');
         $params = $request->all();
 
@@ -63,15 +65,15 @@ class FileController extends Controller
             $params = $request->all();
             foreach ($request->files as $file) {
                 array_push($res, $file->getSize());
-                
+
                 $name = $file->getClientOriginalName();
                 $path = Storage::putFileAs('b', $file, $name);
 
                 $dzz = Dzz::Create([
                     'name' => 'new Dzz'
                 ]);
-        
-        
+
+
                 $dto = new FileDto([
                     'name'       => $name,
                     'path'       => $path,
@@ -114,7 +116,7 @@ class FileController extends Controller
             ], 500);
         }
     }
-    
+
     /**
      * Display the specified resource.
      *
@@ -195,22 +197,51 @@ class FileController extends Controller
         ], 200);
     }
 
-    public function polygon(Request $request) {
+    public function polygon(Request $request)
+    {
         $file = $request->file('file');
-        $data = $file->openFile()->fread($file->getSize());
-        return response()->json([
-            'file' => json_decode($data)
-        ], 200);
+        if ($file->extension() == "zip") {
+            $temp = "temp";
+            $zip = new \ZipArchive;
+
+            Storage::makeDirectory($temp);
+            $filePath = Storage::putFile($temp, $file);
+            $res = $zip->open(Storage::path($filePath));
+
+            if ($res === TRUE) {
+                $zip->extractTo(Storage::path($temp));
+                $zip->close();
+            }
+
+                      
+
+            Storage::copy('files/result/preview.json', $temp."/temp.geojson");
+            Storage::delete($filePath);
+            $res = null;
+            if (Storage::exists($temp."/temp.geojson")) {
+                $res = Storage::get($temp."/temp.geojson");
+            }  
+            // Storage::deleteDirectory($temp);
+            return response()->json([
+                'file' => json_decode($res)
+            ], 200);
+        } else {
+            $data = $file->openFile()->fread($file->getSize());
+            return response()->json([
+                'file' => json_decode($data)
+            ], 200);
+        }
+        
     }
 
-    public function download(Request $request) {
+    public function download(Request $request)
+    {
         $file = File::find($request['fileId']);
         if ($file->type_id == 3) {
             $zip_file = 'archive.zip';
             $zip = new \ZipArchive();
 
-            if ($zip->open(public_path($zip_file), \ZipArchive::CREATE) === TRUE)
-            {
+            if ($zip->open(public_path($zip_file), \ZipArchive::CREATE) === TRUE) {
                 $path = Storage::path($file->path);
                 $iterator = new \RecursiveIteratorIterator(
                     new \RecursiveDirectoryIterator(
@@ -219,12 +250,12 @@ class FileController extends Controller
                     ),
                     \RecursiveIteratorIterator::SELF_FIRST
                 );
-            
+
                 while ($iterator->valid()) {
                     if (!$iterator->isDot()) {
                         $filePath = $iterator->getPathName();
                         $relativePath = substr($filePath, strlen($path) + 1);
-            
+
                         if (!$iterator->isDir()) {
                             $zip->addFile($filePath, $relativePath);
                         } else {

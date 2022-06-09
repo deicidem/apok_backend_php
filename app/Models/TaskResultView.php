@@ -9,9 +9,11 @@ class TaskResultView extends Model
 {
 
     public function file() {
-        return $this->hasOne(File::class);
+        return $this->belongsTo(File::class, 'preview_id');
     }
-
+    public function type() {
+        return $this->belongsTo(TaskResultViewType::class, 'type_id');
+    }
     public function taskResult() {
         return $this->belongsTo(TaskResult::class);
     }
@@ -22,6 +24,8 @@ class TaskResultView extends Model
         'title',
         'type',
         'geography',
+        'preview_id',
+        'type_id'
     ];
     use HasFactory;
 }

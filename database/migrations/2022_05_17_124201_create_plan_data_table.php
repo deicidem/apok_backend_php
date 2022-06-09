@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description')->nullable();
-            $table->foreignIdFor(PlanDataType::class);
+            $table->foreignIdFor(PlanDataType::class, 'type_id');
             $table->foreignIdFor(Plan::class);
             $table->timestamps();
         });

@@ -20,7 +20,6 @@ class FileService
         'id'         => $file->id,
         'name'       => $file->name,
         'path'       => $file->path,
-        'dzzId'      => $file->dzz_id,
         'fileTypeId' => $file->file_type_id,
       ]));
     };
@@ -37,8 +36,7 @@ class FileService
       'id'         => $file->id,
       'name'       => $file->name,
       'path'       => $file->path,
-      'dzzId'      => $file->dzz_id,
-      'fileTypeId' => $file->file_type_id,
+      'fileTypeId' => $file->type_id,
     ]);
   }
 
@@ -53,7 +51,7 @@ class FileService
     $file->name         = $dto->name;
     $file->path         = $dto->path;
     $file->dzz_id       = $dto->dzzId;
-    $file->file_type_id = $dto->fileTypeId;
+    $file->type_id = $dto->fileTypeId;
 
     $file->save();
 

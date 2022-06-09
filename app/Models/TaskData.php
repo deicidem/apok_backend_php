@@ -12,10 +12,10 @@ class TaskData extends Model
         return $this->belongsTo(Task::class);
     }
     public function type() {
-        return $this->belongsTo(TaskDataType::class);
+        return $this->belongsTo(TaskDataType::class, 'type_id');
     }
     public function file() {
-        return $this->belongsTo(File::class);
+        return $this->belongsTo(File::class, );
     }
     public function planData() {
         return $this->belongsTo(PlanData::class);
@@ -27,7 +27,7 @@ class TaskData extends Model
         'geography',
         'text',
         'file_id',
-        'task_data_type_id',
+        'type_id',
         'task_id',
         'plan_data_id'
     ];

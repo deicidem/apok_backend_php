@@ -30,7 +30,7 @@ class PlanService
           'id' => $d->id,
           'title'  => $d->title,
           'description' => $d->description,
-          'type' => $d->plan_data_type_id
+          'type' => $d->type_id
         ]);
       }
       array_push($result, new PlanDto([
@@ -40,7 +40,7 @@ class PlanService
         'description'  => $plan->description,
         'data' => $data,
         'requirements' => $requirements,
-        'previewPath' => $plan->file->path
+        'previewPath' => $plan->preview->path
       ]));
     };
     return $result;

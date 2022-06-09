@@ -34,7 +34,6 @@ class TaskController extends Controller
         ], 200);
     }
 
-
     /**
      * Store a newly created resource in storage.
      *
@@ -44,10 +43,6 @@ class TaskController extends Controller
     public function store(Request $request)
     {
         try {
-            $params = $request->all();
-            print_r($params);
-
-
             $dto = new TaskInputDto([
                 'dzzs'    => $request['dzzs'],
                 'planId'  => $request['planId'],
@@ -61,7 +56,7 @@ class TaskController extends Controller
 
             return response()->json([
                 'message' => "Task created"
-            ], 200);
+            ], 201);
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()

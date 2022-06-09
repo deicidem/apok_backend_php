@@ -20,7 +20,7 @@ return new class extends Migration
         Schema::create('task_data', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Task::class);
-            $table->foreignIdFor(TaskDataType::class);
+            $table->foreignIdFor(TaskDataType::class, 'type_id');
             $table->foreignIdFor(PlanData::class);
             $table->string('title');
             $table->string('text')->nullable();

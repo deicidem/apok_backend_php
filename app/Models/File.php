@@ -16,10 +16,10 @@ class File extends Model
         return $this->hasOne(Dzz::class);
     }
     public function plan() {
-        return $this->belongsTo(Plan::class);
+        return $this->hasOne(Plan::class);
     }
     public function taskResult() {
-        return $this->belongsTo(TaskResult::class);
+        return $this->hasOne(TaskResult::class);
     }
     public function taskResultView() {
         return $this->belongsTo(TaskResultView::class);
@@ -32,7 +32,6 @@ class File extends Model
     protected $fillable = [
         'name',
         'path',
-        'dzz_id',
         'type_id',
     ];
 

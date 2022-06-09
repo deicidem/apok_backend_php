@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('excerpt');
+            $table->foreignIdFor(File::class, 'preview_id');
             $table->timestamps();
         });
     }

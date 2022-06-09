@@ -10,7 +10,7 @@ class Task extends Model
     use HasFactory;
 
     public function taskStatus() {
-        return $this->belongsTo(TaskStatus::class);
+        return $this->belongsTo(TaskStatus::class, 'status_id');
     }
 
     public function result() {
@@ -29,7 +29,7 @@ class Task extends Model
 
     protected $fillable = [
         'title',
-        'task_status_id',
+        'status_id',
         'plan_id'
     ];
 }

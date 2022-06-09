@@ -22,11 +22,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('path');
-            $table->foreignIdFor(Dzz::class)->nullable();
             $table->foreignIdFor(FileType::class, 'type_id');
             $table->foreignIdFor(TaskResult::class)->nullable();
-            $table->foreignIdFor(TaskResultView::class)->nullable();
-            $table->foreignIdFor(Plan::class)->nullable();
             $table->timestamps();
         });
 

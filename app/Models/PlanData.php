@@ -10,7 +10,7 @@ class PlanData extends Model
     use HasFactory;
 
     public function type() {
-        return $this->belongsTo(PlanDataType::class);
+        return $this->belongsTo(PlanDataType::class, 'type_id');
     }
 
     public function plan() {
@@ -21,6 +21,7 @@ class PlanData extends Model
 
     protected $fillable = [
         'title',
-        'description'
+        'description',
+        'type_id'
     ];
 }
