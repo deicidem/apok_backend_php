@@ -16,8 +16,8 @@ class Dzz extends Model
         return $this->belongsTo(ProcessingLevel::class);
     }
 
-    public function sensor() {
-        return $this->belongsTo(Sensor::class);
+    public function satelite() {
+        return $this->belongsTo(Satelite::class);
     }
 
     public function directory() {

@@ -7,6 +7,8 @@ use App\Http\Services\PlanService;
 use Illuminate\Http\Request;
 use App\Http\Requests\PlanStoreRequest;
 use App\Http\Services\Dto\PlanDto;
+use App\Mail\EmailVerification;
+use Illuminate\Support\Facades\Mail;
 
 class PlanController extends Controller
 {
@@ -30,6 +32,8 @@ class PlanController extends Controller
     public function index()
     {
         $plans = $this->service->getAll();
+
+
 
         return response()->json([
             'plans' => $plans

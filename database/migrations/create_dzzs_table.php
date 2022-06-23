@@ -1,6 +1,8 @@
 <?php
 
+use App\Models\File;
 use App\Models\ProcessingLevel;
+use App\Models\Satelite;
 use App\Models\Sensor;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -23,13 +25,11 @@ return new class extends Migration
             $table->integer('route')->nullable();
             $table->integer('cloudiness')->nullable();
             $table->text('description')->nullable();
-            $table->foreignIdFor(Sensor::class)->nullable();
+            $table->foreignIdFor(Satelite::class)->nullable();
             $table->foreignIdFor(ProcessingLevel::class)->nullable();
-            $table->unsignedBigInteger('preview_id')->nullable();
-            $table->unsignedBigInteger('directory_id')->nullable();           
-            $table->foreign('preview_id')->references('id')->on('files');
-            $table->foreign('directory_id')->references('id')->on('files');
-            $table->multipolygon('geography')->nullable();
+            $table->foreignIdFor(File::class, 'preview_id')->nullable()->constrained('files')->cascadeOnDelete();
+            $table->foreignIdFor(File::class, 'directory_id')->nullable()->constrained('files')->cascadeOnDelete();
+            $table->polygon('geography')->nullable();
             $table->timestamps();
         });
     }

@@ -15,7 +15,7 @@ class TaskResultView extends Model
         return $this->belongsTo(TaskResultViewType::class, 'type_id');
     }
     public function taskResult() {
-        return $this->belongsTo(TaskResult::class);
+        return $this->belongsTo(TaskResult::class, 'task_result_id');
     }
 
     protected $table = 'task_result_views';
@@ -25,7 +25,8 @@ class TaskResultView extends Model
         'type',
         'geography',
         'preview_id',
-        'type_id'
+        'type_id',
+        'task_result_id'
     ];
     use HasFactory;
 }

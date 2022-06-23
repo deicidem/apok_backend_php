@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\File;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
@@ -15,8 +16,8 @@ class ImageController extends Controller
      */
     public function index(Request $request)
     {
-        $path = $request->all()['path'];
-        
+        $id = $request->all()['id'];
+        $path = File::find($id)->path;
         $file = Storage::get($path);
 
         return (new Response($file, 200))->header('Content-Type', 'image/png');

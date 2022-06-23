@@ -9,7 +9,9 @@ use App\Http\Requests\TaskStoreRequest;
 use App\Http\Services\Dto\FileDto;
 use App\Http\Services\Dto\TaskInputDto;
 use App\Http\Services\FileService;
+use App\Mail\EmailVerification;
 use App\Models\Dzz;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
@@ -27,13 +29,26 @@ class TaskController extends Controller
 
     public function index()
     {
-        $tasks = $this->service->getAll();
 
-        return response()->json([
-            'tasks' => $tasks
-        ], 200);
+        try {
+        // Mail::to('uyc100@yandex.ru')->send(new EmailVerification);
+
+            $tasks = $this->service->getAll();
+
+            return response()->json([
+                'tasks' => $tasks
+            ], 200);
+        } catch (\Throwable $th) {
+            $tasks = $this->service->getAll();
+
+            return response()->json([
+                'tasks' => $tasks,
+                'message' => $th->getMessage()
+            ], 200);
+        }
+
+        
     }
-
     /**
      * Store a newly created resource in storage.
      *
@@ -122,6 +137,34 @@ class TaskController extends Controller
         }
     }
 
+    public function deleteUserTasks(Request $request) {
+        $deletable = [];
+
+        foreach ($request['ids'] as $id) {
+            $res = $this->service->isTaskDeletable($id);
+            array_push($deletable, [
+                'id' => $id,
+                'delete' => $res
+            ]);
+        }
+
+        
+
+        foreach ($deletable as $task) {
+            if ($task['delete']) {
+                $res = $this->service->deleteUserTask($task['id']);
+                if ($res == null) {
+                    return response()->json([
+                        'message' => 'Task  not found'
+                    ], 404);
+                }
+            }            
+        }
+
+        return response()->json([
+            "deleted" => $deletable
+        ], 200);
+    }
     /**
      * Remove the specified resource from storage.
      *

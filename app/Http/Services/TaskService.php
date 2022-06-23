@@ -11,6 +11,7 @@ use App\Models\Plan;
 use App\Models\PlanData;
 use App\Models\TaskData;
 use App\Models\TaskResultView;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
@@ -28,6 +29,7 @@ class TaskService
           array_push($taskResultFiles, [
             'id'   => $file->id,
             'name' => $file->name,
+            'downloadPath' => "/api/files/download?id=".$file->id
           ]);
         }
       }
@@ -45,7 +47,8 @@ class TaskService
             'id'          => $view->id,
             'title'       => $view->title,
             'type'        => $view->type_id,
-            'previewPath' => $view->file->path,
+            'previewPath' => "/api/images?id=".$view->preview_id,
+            'downloadPath' => "/api/files/download?id=".$view->preview_id,
             'geography'   => $geography
           ]);
         }
@@ -62,7 +65,7 @@ class TaskService
 
   public function getAll()
   {
-    $tasks  = Task::all();
+    $tasks  = Task::all()->where('user_id', Auth::id());
     $result = [];
 
     foreach ($tasks as $task) {
@@ -71,7 +74,9 @@ class TaskService
         'title'  => $task->title,
         'date'   => $task->created_at,
         'status' => $task->taskStatus->name,
-        'result' => $this->getTaskResult($task)
+        'result' => $this->getTaskResult($task),
+        'deletable' => $this->isTaskDeletable($task->id),
+        'updatedAt' => $task->updated_at
       ]));
     };
 
@@ -90,7 +95,9 @@ class TaskService
       'title'  => $task->title,
       'date'   => $task->created_at,
       'status' => $task->taskStatus->name,
-      'result' => $this->getTaskResult($task)
+      'result' => $this->getTaskResult($task),
+      'deletable' => $this->isTaskDeletable($task->id),
+      'updatedAt' => $task->updated_at
     ]);
     return $dto;
   }
@@ -122,12 +129,39 @@ class TaskService
     return true;
   }
 
+  public function isTaskDeletable($id) {
+    $task = Task::find($id);
+
+    if (!$task || $task->user_id != Auth::id()) {
+      return false;
+    } 
+
+    return $task->status_id == 3 ? true : false;
+  }
+
+  public function deleteUserTask($id)
+  {
+    
+    $task = Task::find($id);
+
+    if (!$task || $task->user_id != Auth::id()) {
+      return null;
+    } 
+
+    $task->delete();
+
+    return true;
+  }
+
+
+
   public function post(TaskInputDto $dto)
   {
     $task = Task::Create([
-      'title'     => 'a',
+      'title'     => Plan::Find($dto->planId)->title, 
       'status_id' => 1,
-      'plan_id'   => $dto->planId
+      'plan_id'   => $dto->planId,
+      'user_id'   => Auth::id()
     ]);
 
     $taskId = $task->id;
@@ -185,12 +219,14 @@ class TaskService
             'name'    => $name,
             'path'    => $directory,
             'type_id' => 3,
+            'user_id'   => Auth::id()
           ]);
         } else {
           $newFile = File::Create([
             'name'    => $name,
             'path'    => $path,
             'type_id' => 2,
+            'user_id'   => Auth::id()
           ]);
         }
 

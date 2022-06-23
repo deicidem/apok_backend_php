@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="windows-1251" standalone="no"?>
+<PASP_ROOT>
+Version = 1.0.0.0 
+cOrganization = "АО НИИ ТП"
+cModelTxtName = "Канопус-В №6"
+cProgramm = "APOI"
+tSessionTime = 07:45:29.180
+dSessionDate = 03/10/2019
+dSessionDateUTC = 03/10/2019
+tSessionTimeUTC = 04:45:29.180
+cDataFileName = "KV6_04254_03083_00_KANOPUS_20191003_044408_044618.SCN13.MS.L2.tif"
+cProcLevel = "2A"
+nMarH_WGS84 = 0
+bSunAngle = 31.1231231689453, 163.829696655273
+dSunDate = 0
+tSunTime = 0
+<Device>
+cDeviceName = "KANOPUS"
+nMatrixNumber = 0
+cDeviceTxtName = "МСС"
+<Ch4>
+nChannelNumber = 4
+bSpectralZone = 0.63, 0.69
+bSPEA_APPROX = 0
+</Ch4>
+<Ch1>
+nChannelNumber = 1
+bSpectralZone = 0.51, 0.6
+bSPEA_APPROX = 0
+</Ch1>
+<Ch2>
+nChannelNumber = 2
+bSpectralZone = 0.46, 0.52
+bSPEA_APPROX = 0
+</Ch2>
+<Ch3>
+nChannelNumber = 3
+bSpectralZone = 0.75, 0.85
+bSPEA_APPROX = 0
+</Ch3>
+</Device>
+<Matrix>
+nWidth = 2519
+nHeight = 2512
+nSamples = 4
+nBitsPerPixel = 12
+</Matrix>
+<Geo>
+<CSGeoRef>
+nLUpLat = 54.032647631681
+nLUpLon = 91.8972043342467
+nRUpLat = 54.0356654070967
+nRUpLon = 92.2997068063304
+nRDownLat = 53.7980482152255
+nRDownLon = 92.3036716526915
+nLDownLat = 53.7950564590914
+nLDownLon = 91.9034471143635
+</CSGeoRef>
+<GeoCoding>
+cCoordSystName = Transverse_Mercator</GeoCoding>
+<RPC/>
+</Geo>
+<QReport/>
+</PASP_ROOT>

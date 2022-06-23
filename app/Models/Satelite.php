@@ -17,6 +17,10 @@ class Satelite extends Model
         return $this->belongsTo(SateliteType::class, 'type_id');
     }
 
+    public function dzzs() {
+        return $this->hasMany(Dzz::class);
+    }
+
     protected $table = "satelites";
 
     protected $fillable = [

@@ -40,7 +40,7 @@ class PlanService
         'description'  => $plan->description,
         'data' => $data,
         'requirements' => $requirements,
-        'previewPath' => $plan->preview->path
+        'previewPath' => "/api/images?id=".$plan->preview_id
       ]));
     };
     return $result;

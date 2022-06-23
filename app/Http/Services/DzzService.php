@@ -17,7 +17,7 @@ class DzzService
         $dzzs = Dzz::all()
             ->whereBetween('date', [$searchDto->startDate, $searchDto->endDate])
             ->whereBetween('cloudiness', [$searchDto->startCloudiness, $searchDto->endCloudiness])
-            ->whereIn('sensor_id', $searchDto->satelites);
+            ->whereIn('satelite_id', $searchDto->satelites);
 
         // print_r($dzzs[0]->processingLevel);
 
@@ -41,8 +41,8 @@ class DzzService
                         "route"           => $dzz->route,
                         "cloudiness"      => $dzz->cloudiness,
                         "processingLevel" => $dzz->processingLevel->name,
-                        "sensor"          => $dzz->sensor->name,
-                        "previewPath"     => $dzz->preview->path,
+                        "satelite"        => $dzz->satelite->name,
+                        "previewPath"     => "/api/images?id=".$dzz->preview_id,
                         "geography"       => json_decode($geography[0]->geography)
                     ]);
                     array_push($data, $dto);

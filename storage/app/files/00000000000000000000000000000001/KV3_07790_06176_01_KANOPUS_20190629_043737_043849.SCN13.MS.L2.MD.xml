@@ -1,0 +1,285 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<rs:EarthObservation xmlns:rs="http://schemas.niitp.ru/rs/productMetadata" version="1.2.1" xmlns:eop="http://earth.esa.int/eop" xmlns:gen="http://schemas.niitp.ru/productDataTypes" xmlns:gml="http://www.opengis.net/gml" xmlns:opt="http://earth.esa.int/opt" xmlns:rsL2="http://schemas.niitp.ru/rs/productMetadataL2" xmlns:schemaLocation="http://schemas.niitp.ru/rs/productMetadataL2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsdVersion="1.0" xsi:schemaLocation="http://schemas.niitp.ru/rs/productMetadataL2 http://schemas.niitp.ru/schemas/products/platforms/rs/1.0/productMetadataL2.xsd">
+  <gml:metaDataProperty xlink:type="simple">
+    <rs:EarthObservationMetaData xmlns:eop="http://earth.esa.int/eop" xmlns:gen="http://schemas.niitp.ru/productDataTypes" xmlns:xlink="http://www.w3.org/1999/xlink">
+      <eop:identifier>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS.L2</eop:identifier>
+      <eop:acquisitionType>NOMINAL</eop:acquisitionType>
+      <eop:productType>L2</eop:productType>
+      <eop:status>ACQUIRED</eop:status>
+      <eop:processing>
+        <eop:ProcessingInformation>
+          <eop:processingDate>2020-02-06T17:10:49</eop:processingDate>
+          <eop:processorName>Tamarin Terminal</eop:processorName>
+          <eop:processorVersion>1.5.4</eop:processorVersion>
+        </eop:ProcessingInformation>
+      </eop:processing>
+      <rs:productName>TamarinL2Product</rs:productName>
+      <rs:segmentId>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS</rs:segmentId>
+      <rs:frameId>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS_0_985</rs:frameId>
+      <rs:license>
+        <gen:licenseType>Commercial</gen:licenseType>
+        <gen:resourceLink xlink:href="http://tamarin.com/LICENSE.pdf" xlink:title="MM EULA" xlink:type="locator"/>
+      </rs:license>
+    </rs:EarthObservationMetaData>
+  </gml:metaDataProperty>
+  <gml:validTime xlink:type="simple">
+    <rs:TimePeriod frame="#ISO-8601">
+      <gml:beginPosition frame="#ISO-8601">2019-06-29T04:38:23.913206Z</gml:beginPosition>
+      <gml:endPosition frame="#ISO-8601">2019-06-29T04:38:23.913206Z</gml:endPosition>
+      <rs:beginPositionTAI>835936713.913206</rs:beginPositionTAI>
+      <rs:endPositionTAI>835936713.913206</rs:endPositionTAI>
+    </rs:TimePeriod>
+  </gml:validTime>
+  <gml:using xlink:type="simple">
+    <eop:EarthObservationEquipment>
+      <eop:platform>
+        <eop:Platform>
+          <eop:shortName>KANOPUS_V3</eop:shortName>
+          <eop:serialIdentifier>3</eop:serialIdentifier>
+          <eop:orbitType>LEO</eop:orbitType>
+        </eop:Platform>
+      </eop:platform>
+      <eop:sensor>
+        <rs:Sensor>
+          <rs:sensorParametersList size="1">
+            <rs:sensorParameters>
+              <rs:sensorClass>OPTICAL</rs:sensorClass>
+              <rs:sensorType>KANOPUS-MS-RS</rs:sensorType>
+              <rs:scanType>PUSHBROOM</rs:scanType>
+              <rs:deviceName>KANOPUS</rs:deviceName>
+              <rs:bandCount>4</rs:bandCount>
+              <rs:ccdCount>1</rs:ccdCount>
+              <rs:sensorBandPropertiesList size="1">
+                <rs:sensorBandProperties>
+                  <gen:bandNumber>1 2 3 4</gen:bandNumber>
+                  <gen:spatialResolution uom="m">10</gen:spatialResolution>
+                </rs:sensorBandProperties>
+              </rs:sensorBandPropertiesList>
+            </rs:sensorParameters>
+          </rs:sensorParametersList>
+        </rs:Sensor>
+      </eop:sensor>
+      <eop:acquisitionParameters>
+        <rs:Acquisition>
+          <eop:orbitDirection>DESCENDING</eop:orbitDirection>
+          <eop:incidenceAngle uom="deg">0.126829289003079</eop:incidenceAngle>
+          <opt:illuminationAzimuthAngle uom="deg">147.316146850586</opt:illuminationAzimuthAngle>
+          <opt:illuminationElevationAngle uom="deg">56.178897857666</opt:illuminationElevationAngle>
+          <rs:azimuthAngle uom="deg">-2.54903457058086</rs:azimuthAngle>
+          <rs:satelliteViewAngle uom="deg">6.57865260220202</rs:satelliteViewAngle>
+          <rs:orbitInterval>
+            <rs:firstOrbitNumber>7790</rs:firstOrbitNumber>
+            <rs:lastOrbitNumber>7790</rs:lastOrbitNumber>
+          </rs:orbitInterval>
+          <rs:satelliteAttitudeList size="3">
+            <rs:satelliteAttitude>
+              <rs:location>Start</rs:location>
+              <rs:eulerAngles units="deg">
+                <gen:roll>-4.89520687444738</gen:roll>
+                <gen:pitch>0.0547714202915898</gen:pitch>
+                <gen:yaw>2.17001244765738</gen:yaw>
+              </rs:eulerAngles>
+            </rs:satelliteAttitude>
+            <rs:satelliteAttitude>
+              <rs:location>Center</rs:location>
+              <rs:eulerAngles units="deg">
+                <gen:roll>-4.89520687444738</gen:roll>
+                <gen:pitch>0.0547714202915898</gen:pitch>
+                <gen:yaw>2.17001244765738</gen:yaw>
+              </rs:eulerAngles>
+            </rs:satelliteAttitude>
+            <rs:satelliteAttitude>
+              <rs:location>End</rs:location>
+              <rs:eulerAngles units="deg">
+                <gen:roll>-4.89520687444738</gen:roll>
+                <gen:pitch>0.0547714202915898</gen:pitch>
+                <gen:yaw>2.17001244765738</gen:yaw>
+              </rs:eulerAngles>
+            </rs:satelliteAttitude>
+          </rs:satelliteAttitudeList>
+        </rs:Acquisition>
+      </eop:acquisitionParameters>
+    </eop:EarthObservationEquipment>
+  </gml:using>
+  <gml:target xlink:type="simple">
+    <rs:Footprint>
+      <gml:multiExtentOf xlink:type="simple">
+        <gml:MultiSurface srsName="EPSG:4326">
+          <gml:surfaceMembers>
+            <gml:Polygon>
+              <gml:exterior>
+                <gml:LinearRing>
+                  <gml:posList>91.9567552208483 53.982377783522 92.3346006401981 53.9850638346703 92.3382497597466 53.754520719112 91.9624757401772 53.751857128779 91.9567552208483 53.982377783522</gml:posList>
+                </gml:LinearRing>
+              </gml:exterior>
+            </gml:Polygon>
+          </gml:surfaceMembers>
+        </gml:MultiSurface>
+      </gml:multiExtentOf>
+      <gml:centerOf xlink:type="simple">
+        <gml:Point srsName="EPSG:4326">
+          <gml:pos>92.1481016757883 53.8685572530569</gml:pos>
+        </gml:Point>
+      </gml:centerOf>
+      <rs:geographicLocation srsName="EPSG:4326" valueOrder="lon/lat">
+        <rs:topLeft>
+          <gml:Point srsName="EPSG:4326">
+            <gml:pos>91.9567552208483 53.982377783522</gml:pos>
+          </gml:Point>
+        </rs:topLeft>
+        <rs:topRight>
+          <gml:Point srsName="EPSG:4326">
+            <gml:pos>92.3346006401981 53.9850638346703</gml:pos>
+          </gml:Point>
+        </rs:topRight>
+        <rs:bottomRight>
+          <gml:Point srsName="EPSG:4326">
+            <gml:pos>92.3382497597466 53.754520719112</gml:pos>
+          </gml:Point>
+        </rs:bottomRight>
+        <rs:bottomLeft>
+          <gml:Point srsName="EPSG:4326">
+            <gml:pos>91.9624757401772 53.751857128779</gml:pos>
+          </gml:Point>
+        </rs:bottomLeft>
+      </rs:geographicLocation>
+    </rs:Footprint>
+  </gml:target>
+  <gml:resultOf xlink:type="simple">
+    <rs:EarthObservationResult>
+      <eop:browse>
+        <rs:BrowseInformation>
+          <eop:type>QUICKLOOK</eop:type>
+          <eop:referenceSystemIdentifier codeSpace="EPSG">4326</eop:referenceSystemIdentifier>
+          <eop:fileName>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS.L2.QL.jpg</eop:fileName>
+          <rs:sensorType>KANOPUS-MS-RS</rs:sensorType>
+          <rs:bandNumber>4 1 2</rs:bandNumber>
+          <rs:fileFormat>JPEG</rs:fileFormat>
+          <rs:rowCount>1024</rs:rowCount>
+          <rs:columnCount>989</rs:columnCount>
+        </rs:BrowseInformation>
+      </eop:browse>
+      <eop:product>
+        <rsL2:ProductInformation>
+          <eop:fileName>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS.L2.MD.xml</eop:fileName>
+          <eop:version>1.3</eop:version>
+          <rs:fileInfoType>Metadata</rs:fileInfoType>
+          <rs:rasterFormat>GeoTIFF</rs:rasterFormat>
+          <rs:rasterType>16U</rs:rasterType>
+          <rs:bandCombination>MS</rs:bandCombination>
+          <rs:bitsPerPixel>12</rs:bitsPerPixel>
+          <rs:sourceInfoList>
+            <rs:sourceInfo>
+              <gen:sourceInfoId>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.MS</gen:sourceInfoId>
+              <gen:firstLineNumber>0</gen:firstLineNumber>
+              <gen:lastLineNumber>985</gen:lastLineNumber>
+            </rs:sourceInfo>
+          </rs:sourceInfoList>
+          <rs:productSensorInfoList size="1">
+            <rs:productSensorInfo>
+              <rs:sensorType>KANOPUS-MS-RS</rs:sensorType>
+              <rs:segmentId>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS</rs:segmentId>
+              <rs:compressionType>LZW</rs:compressionType>
+              <rs:bandInSeparateRaster>false</rs:bandInSeparateRaster>
+              <rs:bandCount>4</rs:bandCount>
+              <rs:productBandInfoList size="1">
+                <rs:productBandInfo>
+                  <rs:productRasterInfoList size="1">
+                    <rs:productRasterInfo>
+                      <rs:rasterFileName>KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS.L2.tif</rs:rasterFileName>
+                      <rs:ccdIndex>1</rs:ccdIndex>
+                      <rs:bandCount>4</rs:bandCount>
+                      <rs:rowCount>2444</rs:rowCount>
+                      <rs:columnCount>2361</rs:columnCount>
+                      <rs:dataSize uom="MB">44.0237731933594</rs:dataSize>
+                      <rs:firstLineTimeTai>835936713.913206</rs:firstLineTimeTai>
+                      <rs:lastLineTimeTai>835936713.913206</rs:lastLineTimeTai>
+                      <rs:firstLineTimeUtc>2019-06-29T04:38:23.913206</rs:firstLineTimeUtc>
+                      <rs:lastLineTimeUtc>2019-06-29T04:38:23.913206</rs:lastLineTimeUtc>
+                    </rs:productRasterInfo>
+                  </rs:productRasterInfoList>
+                </rs:productBandInfo>
+              </rs:productBandInfoList>
+              <rs:bandSpecificMetadataList size="4">
+                <rs:bandSpecificMetadata>
+                  <gen:bandNumber>4</gen:bandNumber>
+                  <gen:bandDescription>Band 4 raster data</gen:bandDescription>
+                  <gen:dataUnits/>
+                  <gen:radiometricScaleFactor>0.0712979510529311</gen:radiometricScaleFactor>
+                  <gen:radiometricOffset>0</gen:radiometricOffset>
+                  <gen:spectralRange units="um">
+                    <gen:min>0.63</gen:min>
+                    <gen:max>0.69</gen:max>
+                  </gen:spectralRange>
+                </rs:bandSpecificMetadata>
+                <rs:bandSpecificMetadata>
+                  <gen:bandNumber>1</gen:bandNumber>
+                  <gen:bandDescription>Band 1 raster data</gen:bandDescription>
+                  <gen:dataUnits/>
+                  <gen:radiometricScaleFactor>0.07207802124834</gen:radiometricScaleFactor>
+                  <gen:radiometricOffset>0</gen:radiometricOffset>
+                  <gen:spectralRange units="um">
+                    <gen:min>0.51</gen:min>
+                    <gen:max>0.59</gen:max>
+                  </gen:spectralRange>
+                </rs:bandSpecificMetadata>
+                <rs:bandSpecificMetadata>
+                  <gen:bandNumber>2</gen:bandNumber>
+                  <gen:bandDescription>Band 2 raster data</gen:bandDescription>
+                  <gen:dataUnits/>
+                  <gen:radiometricScaleFactor>0.0677174160500854</gen:radiometricScaleFactor>
+                  <gen:radiometricOffset>0</gen:radiometricOffset>
+                  <gen:spectralRange units="um">
+                    <gen:min>0.46</gen:min>
+                    <gen:max>0.52</gen:max>
+                  </gen:spectralRange>
+                </rs:bandSpecificMetadata>
+                <rs:bandSpecificMetadata>
+                  <gen:bandNumber>3</gen:bandNumber>
+                  <gen:bandDescription>Band 3 raster data</gen:bandDescription>
+                  <gen:dataUnits/>
+                  <gen:radiometricScaleFactor>0.0525449037184595</gen:radiometricScaleFactor>
+                  <gen:radiometricOffset>0</gen:radiometricOffset>
+                  <gen:spectralRange units="um">
+                    <gen:min>0.75</gen:min>
+                    <gen:max>0.84</gen:max>
+                  </gen:spectralRange>
+                </rs:bandSpecificMetadata>
+              </rs:bandSpecificMetadataList>
+              <rs:radiometricCorrectionApplied>true</rs:radiometricCorrectionApplied>
+              <rs:radiometricCorrectionType>Static</rs:radiometricCorrectionType>
+              <rs:radiometricCalibrationFile/>
+              <rs:productResolution uom="m">10.7</rs:productResolution>
+              <rs:spatialResolution uom="m">10.9</rs:spatialResolution>
+            </rs:productSensorInfo>
+          </rs:productSensorInfoList>
+          <rs:elevationCorrectionApplied>true</rs:elevationCorrectionApplied>
+          <rs:elevationModelList size="1">
+            <rs:elevationModel>
+              <gen:name>SRTM1</gen:name>
+              <gen:version>3.0</gen:version>
+              <gen:modificationTime>2015-07-17T00:00:00</gen:modificationTime>
+              <gen:format>JPEG 2000</gen:format>
+              <gen:accuracy uom="m">16</gen:accuracy>
+            </rs:elevationModel>
+          </rs:elevationModelList>
+          <rs:atmosphericCorrectionApplied>false</rs:atmosphericCorrectionApplied>
+          <rsL2:projectionInformation>
+            <gen:projection>Transverse_Mercator</gen:projection>
+            <gen:geodeticDatum>WGS_1984</gen:geodeticDatum>
+            <gen:wktString>PROJCS["WGS 84 / UTM zone 46N",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563,AUTHORITY["EPSG","7030"]],AUTHORITY["EPSG","6326"]],PRIMEM["Greenwich",0,AUTHORITY["EPSG","8901"]],UNIT["degree",0.0174532925199433,AUTHORITY["EPSG","9122"]],AUTHORITY["EPSG","4326"]],PROJECTION["Transverse_Mercator"],PARAMETER["latitude_of_origin",0],PARAMETER["central_meridian",93],PARAMETER["scale_factor",0.9996],PARAMETER["false_easting",500000],PARAMETER["false_northing",0],UNIT["metre",1,AUTHORITY["EPSG","9001"]],AXIS["Easting",EAST],AXIS["Northing",NORTH],AUTHORITY["EPSG","32646"]]</gen:wktString>
+          </rsL2:projectionInformation>
+          <rsL2:geoCorrectionLevel>Precision Geocorrection</rsL2:geoCorrectionLevel>
+          <rsL2:worldParameters>
+            <gen:upperLeftX>431588.065681094</gen:upperLeftX>
+            <gen:upperLeftY>5982064.79494691</gen:upperLeftY>
+            <gen:resolutionX>10.5</gen:resolutionX>
+            <gen:resolutionY>-10.5</gen:resolutionY>
+            <gen:rotationX>0</gen:rotationX>
+            <gen:rotationY>0</gen:rotationY>
+          </rsL2:worldParameters>
+        </rsL2:ProductInformation>
+      </eop:product>
+    </rs:EarthObservationResult>
+  </gml:resultOf>
+</rs:EarthObservation>

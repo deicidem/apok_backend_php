@@ -19,13 +19,16 @@ class File extends Model
         return $this->hasOne(Plan::class);
     }
     public function taskResult() {
-        return $this->hasOne(TaskResult::class);
+        return $this->belongsTo(TaskResult::class);
     }
     public function taskResultView() {
-        return $this->belongsTo(TaskResultView::class);
+        return $this->hasOne(TaskResultView::class);
     }
     public function taskData() {
         return $this->hasMany(TaskData::class);
+    }
+    public function user() {
+        return $this->belongsTo(User::class);
     }
     protected $table = 'files';
 
@@ -33,6 +36,7 @@ class File extends Model
         'name',
         'path',
         'type_id',
+        'user_id'
     ];
 
 }

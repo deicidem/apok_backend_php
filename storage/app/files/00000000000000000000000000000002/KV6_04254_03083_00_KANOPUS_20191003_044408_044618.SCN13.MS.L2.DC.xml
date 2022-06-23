@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<rsDc:ProductDescription xmlns:rsDc="http://schemas.niitp.ru/rs/productDsc" version="1.2.1">
+	<driverType>TAMARIN_PRODUCT_L2</driverType>
+	<driverVersion>1.3</driverVersion>
+	<satellite>KANOPUS_V6</satellite>
+	<productId>KV6_04254_03083_00_KANOPUS_20191003_044408_044618.SCN13.MS.L2</productId>
+	<level>L2</level>
+</rsDc:ProductDescription>

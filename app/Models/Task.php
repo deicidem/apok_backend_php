@@ -24,12 +24,15 @@ class Task extends Model
     public function plan() {
         return $this->belongsTo(Plan::class);
     }
-
+    public function user() {
+        return $this->belongsTo(user::class);
+    }
     protected $table = 'tasks';
 
     protected $fillable = [
         'title',
         'status_id',
-        'plan_id'
+        'plan_id',
+        'user_id'
     ];
 }

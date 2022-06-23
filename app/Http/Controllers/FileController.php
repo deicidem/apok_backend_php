@@ -33,7 +33,43 @@ class FileController extends Controller
         ], 200);
     }
 
+    public function userFiles() {
+        $files = $this->service->userFiles();
 
+        return response()->json([
+            'files' => $files
+        ]);
+    }
+
+    public function deleteUserFiles(Request $request) {
+
+        $deletable = [];
+
+        foreach ($request['filesIds'] as $id) {
+            $res = $this->service->isFileDeletable($id);
+            array_push($deletable, [
+                'id' => $id,
+                'delete' => $res
+            ]);
+        }
+
+        
+
+        foreach ($deletable as $file) {
+            if ($file['delete']) {
+                $res = $this->service->deleteUserFile($file['id']);
+                if ($res == null) {
+                    return response()->json([
+                        'message' => 'File  not found'
+                    ], 404);
+                }
+            }            
+        }
+
+        return response()->json([
+            "deleted" => $deletable
+        ], 200);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -185,7 +221,8 @@ class FileController extends Controller
      */
     public function destroy($id)
     {
-        $res = $this->service->delete($id);
+        $res = $this->service->deleteUserFile($id);
+
         if ($res == null) {
             return response()->json([
                 'message' => 'File not found'
@@ -236,7 +273,7 @@ class FileController extends Controller
 
     public function download(Request $request)
     {
-        $file = File::find($request['fileId']);
+        $file = File::find($request['id']);
         if ($file->type_id == 3) {
             $zip_file = 'archive.zip';
             $zip = new \ZipArchive();

@@ -13,17 +13,21 @@ class TaskOutputDto extends AbstractDto implements DtoInterface
   public $date;
   public $status;
   public $result;
+  public $deletable;
+  public $updatedAt;
 
 
   /* @return array */
   protected function configureValidatorRules(): array
   {
     return [
-      'id'     => 'nullable',
-      'title'  => 'nullable',
-      'date'   => 'nullable',
-      'status' => 'nullable',
-      'result' => 'nullable',
+      'id'        => 'nullable',
+      'title'     => 'nullable',
+      'date'      => 'nullable',
+      'status'    => 'nullable',
+      'result'    => 'nullable',
+      'deletable' => 'required',
+      'updatedAt' => 'required',
     ];
   }
 
@@ -57,6 +61,8 @@ class TaskOutputDto extends AbstractDto implements DtoInterface
     } else {
       $this->result = null;
     }
+    $this->deletable = $data['deletable'];
+    $this->updatedAt = $data['updatedAt'];
     return true;
   }
 }

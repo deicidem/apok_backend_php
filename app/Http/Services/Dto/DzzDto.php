@@ -15,7 +15,7 @@ class DzzDto extends AbstractDto implements DtoInterface
     public $route;
     public $cloudiness;
     public $processingLevel;
-    public $sensor;
+    public $satelite;
     public $previewPath;
     public $geography;
     /* @return array */
@@ -29,7 +29,7 @@ class DzzDto extends AbstractDto implements DtoInterface
             'route'           => 'required',
             'cloudiness'      => 'required',
             'processingLevel' => 'required',
-            'sensor'          => 'required',
+            'satelite'          => 'required',
             'previewPath'     => 'required',
             'geography'       => 'required',
         ];
@@ -47,7 +47,7 @@ class DzzDto extends AbstractDto implements DtoInterface
         $this->route           = $data['route'];
         $this->cloudiness      = $data['cloudiness'];
         $this->processingLevel = $data['processingLevel'];
-        $this->sensor          = $data['sensor'];
+        $this->satelite          = $data['satelite'];
         $this->previewPath     = $data['previewPath'];
         $this->geography       = $data['geography'];
 

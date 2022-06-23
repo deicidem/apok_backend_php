@@ -10,20 +10,22 @@ class FileDto extends AbstractDto implements DtoInterface
   /* @var string */
   public $id;
   public $name;
-  public $fileTypeId;
-  public $dzzId;
+  public $type;
+  public $date;
   public $path;
+  public $deletable;
 
 
   /* @return array */
   protected function configureValidatorRules(): array
   {
     return [
-      'id'         => 'nullable',
-      'name'       => 'required',
-      'fileTypeId' => 'required',
-      'dzzId'      => 'required',
-      'path'       => 'required',
+      'id'        => 'nullable',
+      'name'      => 'required',
+      'type'      => 'required',
+      'date'      => 'required',
+      'path'      => 'required',
+      'deletable' => 'required',
     ];
   }
 
@@ -37,10 +39,11 @@ class FileDto extends AbstractDto implements DtoInterface
     } else {
       $this->id = null;
     }
-    $this->name       = $data['name'];
-    $this->fileTypeId = $data['fileTypeId'];
-    $this->dzzId      = $data['dzzId'];
-    $this->path       = $data['path'];
+    $this->name      = $data['name'];
+    $this->type      = $data['type'];
+    $this->date      = $data['date'];
+    $this->path      = $data['path'];
+    $this->deletable = $data['deletable'];
 
 
     return true;

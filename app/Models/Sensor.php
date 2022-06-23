@@ -17,9 +17,7 @@ class Sensor extends Model
         return $this->hasMany(Spector::class);
     }
 
-    public function dzzs() {
-        return $this->hasMany(Dzz::class);
-    }
+    
 
     protected $table = 'sensors';
 
