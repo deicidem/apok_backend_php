@@ -18,6 +18,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function tasks() {
         return $this->hasMany(File::class);
     }
+    public function role() {
+        return $this->belongsTo(Role::class);
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -28,6 +31,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_name',
         'email',
         'password',
+        'role_id'
     ];
 
     /**

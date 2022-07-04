@@ -9,7 +9,6 @@ class Dzz extends Model
 {
     use HasFactory;
 
-
     protected $table = 'dzzs';
 
     public function processingLevel() {

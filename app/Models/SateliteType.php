@@ -10,7 +10,7 @@ class SateliteType extends Model
     use HasFactory;
 
     public function satelites() {
-        return $this->hasMany(Satelite::class);
+        return $this->hasMany(Satelite::class, 'type_id');
     }
 
     protected $table = "satelite_types";

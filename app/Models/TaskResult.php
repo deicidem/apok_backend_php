@@ -21,6 +21,8 @@ class TaskResult extends Model
         return $this->hasMany(TaskResultView::class);
     }
 
+    protected $touches = ['task'];
+
     protected $table = 'task_results';
 
 }

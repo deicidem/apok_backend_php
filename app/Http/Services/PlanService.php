@@ -7,6 +7,7 @@ use App\Http\Services\Dto\DtoInterface;
 use App\Http\Services\Dto\DzzDto;
 use App\Http\Services\Dto\PlanDto;
 use App\Http\Services\Dto\SearchDto;
+use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 
 class PlanService
@@ -40,7 +41,7 @@ class PlanService
         'description'  => $plan->description,
         'data' => $data,
         'requirements' => $requirements,
-        'previewPath' => "/api/images?id=".$plan->preview_id
+        'previewPath' => '/public'.Storage::url($plan->preview->path)
       ]));
     };
     return $result;

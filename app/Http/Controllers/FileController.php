@@ -237,7 +237,8 @@ class FileController extends Controller
     public function polygon(Request $request)
     {
         $file = $request->file('file');
-        if ($file->extension() == "zip") {
+        $ext = $file->extension();
+        if ($ext == "zip") {
             $temp = "temp";
             $zip = new \ZipArchive;
 
@@ -262,11 +263,15 @@ class FileController extends Controller
             return response()->json([
                 'file' => json_decode($res)
             ], 200);
-        } else {
+        } else if ($ext == "json" || $ext == "geojson" ) {
             $data = $file->openFile()->fread($file->getSize());
             return response()->json([
                 'file' => json_decode($data)
             ], 200);
+        } else {
+            return response()->json([
+                'message' => "Допустимые расширения файла .json, .geojson, .zip"
+            ], 422);
         }
         
     }

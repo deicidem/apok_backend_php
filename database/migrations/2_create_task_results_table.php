@@ -17,7 +17,10 @@ return new class extends Migration
     {
         Schema::create('task_results', function (Blueprint $table) {
             $table->id();   
-            $table->foreignIdFor(Task::class)->constrained('tasks')->cascadeOnDelete();
+            $table->foreignIdFor(Task::class)
+                ->constrained('tasks')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

@@ -19,7 +19,11 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('excerpt');
-            $table->foreignIdFor(File::class, 'preview_id')->nullable()->constrained('files')->cascadeOnDelete();
+            $table->foreignIdFor(File::class, 'preview_id')
+                ->nullable()
+                ->constrained('files')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->timestamps();
         });
     }

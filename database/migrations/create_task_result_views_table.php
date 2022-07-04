@@ -20,9 +20,16 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->foreignIdFor(TaskResultViewType::class, 'type_id');
-            $table->foreignIdFor(TaskResult::class, 'task_result_id')->constrained('task_results')->cascadeOnDelete();
-            $table->foreignIdFor(File::class, 'preview_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->polygon('geography')->nullable();
+            $table->foreignIdFor(TaskResult::class, 'task_result_id')
+                ->constrained('task_results')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignIdFor(File::class, 'preview_id')
+                ->nullable()
+                ->constrained('files')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->geometry('geography')->nullable();
             $table->timestamps();
         });
     }

@@ -126,7 +126,6 @@ class FileService
   {
     
     $file = File::find($id);
-
     if (!$file || $file->user_id != Auth::id()) {
       return null;
     } 

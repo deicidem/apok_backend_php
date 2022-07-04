@@ -24,7 +24,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('path');
             $table->foreignIdFor(FileType::class, 'type_id');
-            $table->foreignIdFor(TaskResult::class)->nullable()->constrained('task_results')->cascadeOnDelete();
+            $table->foreignIdFor(TaskResult::class)
+                ->nullable()
+                ->constrained('task_results')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->foreignIdFor(User::class)->nullable();
             $table->timestamps();
         });

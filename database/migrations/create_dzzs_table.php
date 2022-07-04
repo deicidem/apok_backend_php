@@ -27,9 +27,17 @@ return new class extends Migration
             $table->text('description')->nullable();
             $table->foreignIdFor(Satelite::class)->nullable();
             $table->foreignIdFor(ProcessingLevel::class)->nullable();
-            $table->foreignIdFor(File::class, 'preview_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->foreignIdFor(File::class, 'directory_id')->nullable()->constrained('files')->cascadeOnDelete();
-            $table->polygon('geography')->nullable();
+            $table->foreignIdFor(File::class, 'preview_id')
+                ->nullable()
+                ->constrained('files')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->foreignIdFor(File::class, 'directory_id')
+                ->nullable()
+                ->constrained('files')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->geometry('geography')->nullable();
             $table->timestamps();
         });
     }

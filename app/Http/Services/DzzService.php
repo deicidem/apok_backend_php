@@ -30,9 +30,10 @@ class DzzService
                 $json    = json_decode($searchDto->polygon, true);
                 $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)
                     ->getGeometry()->jsonSerialize());
-
                 $geography = Dzz::selectRaw('ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography, id')->whereRaw('id = ? and ST_Intersects(geography, ST_GeomFromGeoJSON(?))', [$dzz->id, $polygon])->get();
+
                 if (count($geography) != 0) {
+                    $previewPath = Storage::url($dzz->preview->path);
                     $dto = new DzzDto([
                         'id'              => $dzz->id,
                         "name"            => $dzz->name,
@@ -42,7 +43,7 @@ class DzzService
                         "cloudiness"      => $dzz->cloudiness,
                         "processingLevel" => $dzz->processingLevel->name,
                         "satelite"        => $dzz->satelite->name,
-                        "previewPath"     => "/api/images?id=".$dzz->preview_id,
+                        "previewPath"     => '/public'.$previewPath,
                         "geography"       => json_decode($geography[0]->geography)
                     ]);
                     array_push($data, $dto);

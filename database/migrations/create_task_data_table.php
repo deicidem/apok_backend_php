@@ -19,13 +19,20 @@ return new class extends Migration
     {
         Schema::create('task_data', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Task::class)->constrained('tasks')->cascadeOnDelete();
+            $table->foreignIdFor(Task::class)
+                ->constrained('tasks')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
             $table->foreignIdFor(TaskDataType::class, 'type_id');
             $table->foreignIdFor(PlanData::class);
             $table->string('title');
             $table->string('text')->nullable();
-            $table->foreignIdFor(File::class)->nullable()->constrained('files')->cascadeOnDelete();
-            $table->polygon('geography')->nullable();
+            $table->foreignIdFor(File::class)
+                ->nullable()
+                ->constrained('files')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();
+            $table->geometry('geography')->nullable();
             $table->timestamps();
         });
     }

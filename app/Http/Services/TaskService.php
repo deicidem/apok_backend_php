@@ -47,7 +47,7 @@ class TaskService
             'id'          => $view->id,
             'title'       => $view->title,
             'type'        => $view->type_id,
-            'previewPath' => "/api/images?id=".$view->preview_id,
+            'previewPath' => '/public'.Storage::url($view->preview->path),
             'downloadPath' => "/api/files/download?id=".$view->preview_id,
             'geography'   => $geography
           ]);
@@ -136,7 +136,7 @@ class TaskService
       return false;
     } 
 
-    return $task->status_id == 3 ? true : false;
+    return $task->status_id == 3 || $task->status_id == 1 ? true : false;
   }
 
   public function deleteUserTask($id)

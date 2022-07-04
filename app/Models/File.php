@@ -31,7 +31,7 @@ class File extends Model
         return $this->belongsTo(User::class);
     }
     protected $table = 'files';
-
+    protected $touches = ['taskResult'];
     protected $fillable = [
         'name',
         'path',

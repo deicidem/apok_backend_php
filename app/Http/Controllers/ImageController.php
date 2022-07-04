@@ -16,11 +16,18 @@ class ImageController extends Controller
      */
     public function index(Request $request)
     {
-        $id = $request->all()['id'];
-        $path = File::find($id)->path;
-        $file = Storage::get($path);
+        try {
+            $id = $request->id;
+            $files = File::all();
+            $path = $files->firstWhere('id', $id)->path;
+            $file = Storage::get($path);
+            return (new Response($file, 200))->header('Content-Type', 'image/png');
 
-        return (new Response($file, 200))->header('Content-Type', 'image/png');
+        } catch (\Throwable $th) {
+            print_r($th);
+            return response();
+        }
+        
     }
 
     /**

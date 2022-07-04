@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class TaskResultView extends Model
 {
 
-    public function file() {
+
+    public function preview() {
         return $this->belongsTo(File::class, 'preview_id');
     }
     public function type() {
@@ -19,6 +20,8 @@ class TaskResultView extends Model
     }
 
     protected $table = 'task_result_views';
+
+    protected $touches = ['taskResult'];
 
     protected $fillable = [
         'title',
