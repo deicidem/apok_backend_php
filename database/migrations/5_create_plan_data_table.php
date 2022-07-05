@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\PlanDataType;
 use App\Models\Plan;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -14,11 +15,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('plan_requirements', function (Blueprint $table) {
+        Schema::create('plan_data', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->string('description');
-            $table->foreignIdFor(Plan::class);
+            $table->string('description')->nullable();
+            $table->foreignIdFor(PlanDataType::class, 'type_id')->constrained("plan_data_types");
+            $table->foreignIdFor(Plan::class)->constrained("plans");
             $table->timestamps();
         });
     }
@@ -30,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plan_requirements');
+        Schema::dropIfExists('plan_data');
     }
 };

@@ -1,7 +1,6 @@
 <?php
 
-use App\Models\PlanDataType;
-use App\Models\Plan;
+use App\Models\Satelite;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +14,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('plan_data', function (Blueprint $table) {
+        Schema::create('sensors', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
+            $table->string('name');
             $table->string('description')->nullable();
-            $table->foreignIdFor(PlanDataType::class, 'type_id');
-            $table->foreignIdFor(Plan::class);
+            $table->foreignIdFor(Satelite::class)->constrained("satelites");
             $table->timestamps();
         });
     }
@@ -32,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('plan_data');
+        Schema::dropIfExists('sensors');
     }
 };

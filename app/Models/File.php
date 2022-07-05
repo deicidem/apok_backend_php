@@ -19,7 +19,7 @@ class File extends Model
         return $this->hasOne(Plan::class);
     }
     public function taskResult() {
-        return $this->belongsTo(TaskResult::class);
+        return $this->hasOne(TaskResult::class);
     }
     public function taskResultView() {
         return $this->hasOne(TaskResultView::class);

@@ -42,12 +42,8 @@ Route::resource('plans', PlanController::class);
 Route::resource('images', ImageController::class);
 Route::resource('dzzs', DzzController::class);
 
-Route::get('user/auth', function () {
-  $user = User::Find(Auth::id());
-  return response()->json([
-    'user' => $user
-  ], 200);
-});
+Route::get('user/auth', [UserController::class, 'auth']);
+Route::get('user/check-auth', [UserController::class, 'checkAuth']);
 Route::get('satelites', function () {
   $satelitesTypes = SateliteType::all();
   $res = [];
@@ -69,11 +65,12 @@ Route::get('satelites', function () {
     'satelites' => $res
   ]);
 });
+// Route::middleware('admin')->resource('tasks', TaskController::class);
 Route::resource('users', UserController::class);
 Route::group(['middleware' => 'auth:sanctum'], function () {
-  Route::resource('files', FileController::class);
-  Route::resource('alerts', AlertController::class);
   Route::resource('tasks', TaskController::class);
+  // Route::resource('files', FileController::class);
+  Route::resource('alerts', AlertController::class);
   Route::get('files/download', [FileController::class, 'download']);
   Route::get('user/files', [FileController::class, 'userFiles']);
   Route::delete('user/files', [FileController::class, 'deleteUserFiles']);

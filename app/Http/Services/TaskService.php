@@ -27,9 +27,9 @@ class TaskService
       if ($task->result->files != null) {
         foreach ($task->result->files as $file) {
           array_push($taskResultFiles, [
-            'id'   => $file->id,
+            'id'   => $file->file->id,
             'name' => $file->name,
-            'downloadPath' => "/api/files/download?id=".$file->id
+            'downloadPath' => "/api/files/download?id=".$file->file->id
           ]);
         }
       }
@@ -65,9 +65,9 @@ class TaskService
 
   public function getAll()
   {
-    $tasks  = Task::all()->where('user_id', Auth::id());
+    // $tasks  = Task::all()->where('user_id', Auth::id());
+    $tasks  = Task::orderBy('id')->get();
     $result = [];
-
     foreach ($tasks as $task) {
       array_push($result, new TaskOutputDto([
         'id'     => $task->id,
@@ -132,7 +132,7 @@ class TaskService
   public function isTaskDeletable($id) {
     $task = Task::find($id);
 
-    if (!$task || $task->user_id != Auth::id()) {
+    if (!$task) {
       return false;
     } 
 

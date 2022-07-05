@@ -20,6 +20,7 @@ use App\Models\Task;
 use App\Models\TaskData;
 use App\Models\TaskDataType;
 use App\Models\TaskResult;
+use App\Models\TaskResultFile;
 use App\Models\TaskResultView;
 use App\Models\TaskResultViewType;
 use App\Models\TaskStatus;
@@ -1142,7 +1143,8 @@ class DatabaseSeeder extends Seeder
         ]);
 
         TaskResult::Create([
-            'task_id' => 1
+            'task_id' => 1,
+            'file_id' => 1
         ]);
         TaskResultViewType::Create([
             'title' => 'raster'
@@ -1188,27 +1190,26 @@ class DatabaseSeeder extends Seeder
             'type_id'        => 2,
             'path'           => 'public/result/RGB/Отчет геом.jpg',
             'user_id'        => 1,
-            'task_result_id' => 1
         ]);
         File::Create([
             'name'           => 'Архивный снимок',
             'type_id'        => 1,
             'path'           => 'public/АВИМ/result/Архивный снимок.png',
-            // 'user_id'        => 1,
+            'user_id'        => 1,
             // 'task_result_id' => 1
         ]);
         File::Create([
             'name'           => 'Актуальный снимок',
             'type_id'        => 1,
             'path'           => 'public/АВИМ/result/Актуальный снимок.png',
-            // 'user_id'        => 1,
+            'user_id'        => 1,
             // 'task_result_id' => 1
         ]);
         File::Create([
             'name'           => 'Изменения',
             'type_id'        => 1,
             'path'           => 'public/АВИМ/result/Изм3.png',
-            // 'user_id'        => 1,
+            'user_id'        => 1,
             // 'task_result_id' => 1
         ]);
         File::Create([
@@ -1216,7 +1217,36 @@ class DatabaseSeeder extends Seeder
             'type_id'        => 3,
             'path'           => 'public/result',
             'user_id'        => 1,
-            'task_result_id' => 1
+        ]);
+
+
+        TaskResultFile::Create([
+            'name'           => 'Отчет',
+            'task_result_id' => 1,
+            'file_id' => 6
+        ]);
+        TaskResultFile::Create([
+            'name'           => 'Архивный снимок',
+            'task_result_id' => 1,
+            'file_id' => 7
+            // 'task_result_id' => 1
+        ]);
+        TaskResultFile::Create([
+            'name'           => 'Актуальный снимок',
+            'task_result_id' => 1,
+            'file_id' => 8
+            // 'task_result_id' => 1
+        ]);
+        TaskResultFile::Create([
+            'name'           => 'Изменения',
+            'task_result_id' => 1,
+            'file_id' => 9
+            // 'task_result_id' => 1
+        ]);
+        TaskResultFile::Create([
+            'name'           => 'Архив',
+            'task_result_id' => 1,
+            'file_id' => 10
         ]);
 
         // TaskResultView::Create([

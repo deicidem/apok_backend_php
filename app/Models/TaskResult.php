@@ -14,7 +14,7 @@ class TaskResult extends Model
     }
 
     public function files() {
-        return $this->hasMany(File::class);
+        return $this->hasMany(TaskResultFile::class);
     }
 
     public function views() {

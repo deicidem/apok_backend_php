@@ -25,8 +25,8 @@ return new class extends Migration
             $table->integer('route')->nullable();
             $table->integer('cloudiness')->nullable();
             $table->text('description')->nullable();
-            $table->foreignIdFor(Satelite::class)->nullable();
-            $table->foreignIdFor(ProcessingLevel::class)->nullable();
+            $table->foreignIdFor(Satelite::class, 'satelite_id')->nullable()->constrained('satelites');
+            $table->foreignIdFor(ProcessingLevel::class, 'processing_level_id')->nullable()->constrained('processing_levels');
             $table->foreignIdFor(File::class, 'preview_id')
                 ->nullable()
                 ->constrained('files')

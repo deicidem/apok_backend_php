@@ -1,8 +1,9 @@
 <?php
 
 use App\Models\File;
-use App\Models\TaskResult;
-use App\Models\TaskResultViewType;
+use App\Models\PlanData;
+use App\Models\Task;
+use App\Models\TaskDataType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,15 +17,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('task_result_views', function (Blueprint $table) {
+        Schema::create('task_data', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
-            $table->foreignIdFor(TaskResultViewType::class, 'type_id');
-            $table->foreignIdFor(TaskResult::class, 'task_result_id')
-                ->constrained('task_results')
+            $table->foreignIdFor(Task::class)
+                ->constrained('tasks')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->foreignIdFor(File::class, 'preview_id')
+            $table->foreignIdFor(TaskDataType::class, 'type_id')->constrained("task_data_types");
+            $table->foreignIdFor(PlanData::class)->constrained("plan_data");
+            $table->string('title');
+            $table->string('text')->nullable();
+            $table->foreignIdFor(File::class)
                 ->nullable()
                 ->constrained('files')
                 ->cascadeOnDelete()
@@ -41,6 +44,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('task_result_views');
+        Schema::dropIfExists('task_data');
     }
 };

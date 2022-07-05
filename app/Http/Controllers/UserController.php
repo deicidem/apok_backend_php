@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Services\UserService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -30,6 +31,23 @@ class UserController extends Controller
 
         return response()->json([
             'users' => $users
+        ], 200);
+    }
+
+    public function auth()
+    {
+        $user = $this->service->getOne(Auth::id());
+
+        return response()->json([
+            'user' => $user
+        ], 200);
+    }
+    public function checkAuth()
+    {
+        $isAuth = Auth::check();
+
+        return response()->json([
+            'isAuth' => $isAuth
         ], 200);
     }
 

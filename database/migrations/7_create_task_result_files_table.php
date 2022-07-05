@@ -1,7 +1,7 @@
 <?php
 
-use App\Models\Task;
-
+use App\Models\File;
+use App\Models\TaskResult;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -15,12 +15,17 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('task_results', function (Blueprint $table) {
+        Schema::create('task_result_files', function (Blueprint $table) {
             $table->id();   
-            $table->foreignIdFor(Task::class)
-                ->constrained('tasks')
+            $table->string('name');
+            $table->foreignIdFor(TaskResult::class)
+                ->constrained('task_results')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->foreignIdFor(File::class)
+                ->constrained('files')
+                ->cascadeOnDelete()
+                ->cascadeOnUpdate();  
             $table->timestamps();
         });
     }
@@ -32,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('task_results');
+        Schema::dropIfExists('task_result_files');
     }
 };

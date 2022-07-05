@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\Satelite;
+use App\Models\SateliteType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,11 +14,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sensors', function (Blueprint $table) {
+        Schema::create('satelites', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->string('description')->nullable();
-            $table->foreignIdFor(Satelite::class);
+            $table->string('description');
+            $table->foreignIdFor(SateliteType::class, 'type_id')->constrained('satelite_types');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sensors');
+        Schema::dropIfExists('satelites');
     }
 };
