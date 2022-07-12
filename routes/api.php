@@ -5,6 +5,7 @@ use App\Http\Controllers\ImageController;
 use App\Http\Controllers\FileController;
 use App\Http\Controllers\AlertController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\PlanController;
 use App\Http\Controllers\UserController;
@@ -67,12 +68,22 @@ Route::get('satelites', function () {
 });
 // Route::middleware('admin')->resource('tasks', TaskController::class);
 Route::resource('users', UserController::class);
-Route::group(['middleware' => 'auth:sanctum'], function () {
+Route::resource('groups', GroupController::class);
+  Route::post('users/block/{user}', [UserController::class, 'block']);
+Route::post('users/unblock/{user}', [UserController::class, 'unblock']);
+Route::group(['middleware' => ['auth:sanctum', 'not-blocked']], function () {
   Route::resource('tasks', TaskController::class);
-  // Route::resource('files', FileController::class);
+  Route::resource('files', FileController::class);
   Route::resource('alerts', AlertController::class);
   Route::get('files/download', [FileController::class, 'download']);
-  Route::get('user/files', [FileController::class, 'userFiles']);
-  Route::delete('user/files', [FileController::class, 'deleteUserFiles']);
-  Route::delete('tasks', [TaskController::class, 'deleteUserTasks']);
+
+  Route::get('user/files', [UserController::class, 'getFiles']);
+  Route::delete('user/files', [UserController::class, 'deleteFiles']);
+  Route::delete('user/files/{file}', [UserController::class, 'deleteFile']);
+
+  Route::get('user/tasks', [UserController::class, 'getTasks']);
+  Route::get('user/tasks/{task}', [UserController::class, 'getTask']);
+  Route::post('user/tasks', [UserController::class, 'createTask']);
+  Route::delete('user/tasks', [UserController::class, 'deleteTasks']);
+  Route::delete('user/tasks/{task}', [UserController::class, 'deleteTask']);
 });

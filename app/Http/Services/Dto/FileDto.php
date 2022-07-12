@@ -14,6 +14,8 @@ class FileDto extends AbstractDto implements DtoInterface
   public $date;
   public $path;
   public $deletable;
+  public $userId;
+  public $userName;
 
 
   /* @return array */
@@ -26,6 +28,8 @@ class FileDto extends AbstractDto implements DtoInterface
       'date'      => 'required',
       'path'      => 'required',
       'deletable' => 'required',
+      'userId'    => 'nullable',
+      'userName'  => 'nullable',
     ];
   }
 
@@ -44,7 +48,16 @@ class FileDto extends AbstractDto implements DtoInterface
     $this->date      = $data['date'];
     $this->path      = $data['path'];
     $this->deletable = $data['deletable'];
-
+    if (array_key_exists('userId', $data)) {
+      $this->userId = $data['userId'];
+    } else {
+      $this->userId = null;
+    }
+    if (array_key_exists('userName', $data)) {
+      $this->userName = $data['userName'];
+    } else {
+      $this->userName = null;
+    }
 
     return true;
   }

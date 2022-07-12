@@ -24,52 +24,21 @@ class FileController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        $files = $this->service->getAll();
-
-        return response()->json([
-            'plans' => $files
-        ], 200);
-    }
-
-    public function userFiles() {
-        $files = $this->service->userFiles();
+        $files = null;
+        if ($request->has('userId')) {
+            $files = $this->service->getAllByUser($request->userId);
+        } else {
+            $files = $this->service->getAll();
+        }   
 
         return response()->json([
             'files' => $files
-        ]);
-    }
-
-    public function deleteUserFiles(Request $request) {
-
-        $deletable = [];
-
-        foreach ($request['filesIds'] as $id) {
-            $res = $this->service->isFileDeletable($id);
-            array_push($deletable, [
-                'id' => $id,
-                'delete' => $res
-            ]);
-        }
-
-        
-
-        foreach ($deletable as $file) {
-            if ($file['delete']) {
-                $res = $this->service->deleteUserFile($file['id']);
-                if ($res == null) {
-                    return response()->json([
-                        'message' => 'File  not found'
-                    ], 404);
-                }
-            }            
-        }
-
-        return response()->json([
-            "deleted" => $deletable
         ], 200);
     }
+
+    
 
     /**
      * Store a newly created resource in storage.
@@ -230,9 +199,11 @@ class FileController extends Controller
         }
 
         return response()->json([
-            'message' => "Plan successfully deleted"
+            'message' => "File successfully deleted"
         ], 200);
     }
+
+    
 
     public function polygon(Request $request)
     {

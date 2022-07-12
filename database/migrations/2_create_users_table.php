@@ -25,6 +25,7 @@ return new class extends Migration
                 ->constrained('roles')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+            $table->boolean('is_blocked')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });

@@ -1,8 +1,7 @@
 <?php
 
-use App\Models\File;
-use App\Models\Task;
-
+use App\Models\Group;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -16,12 +15,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('task_results', function (Blueprint $table) {
-            $table->id();   
-            $table->foreignIdFor(Task::class)
-                ->constrained('tasks')
-                ->cascadeOnDelete()
-                ->cascadeOnUpdate();
+        Schema::create('group_user', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('user_id');
+            $table->unsignedBigInteger('group_id');
+            $table->foreign('user_id')->references('id')->on('users');
+            $table->foreign('group_id')->references('id')->on('groups');
             $table->timestamps();
         });
     }
@@ -33,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('task_results');
+        Schema::dropIfExists('groups');
     }
 };

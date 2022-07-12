@@ -5,18 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class TaskStatus extends Model
+class GroupType extends Model
 {
     use HasFactory;
-
-    public function tasks() {
-        return $this->hasMany(Task::class);
-    }
-
-    protected $table = 'task_statuses';
-
+    protected $table = 'group_types';
     protected $fillable = [
-        'id',
-        'name',
+        'title'
     ];
 }

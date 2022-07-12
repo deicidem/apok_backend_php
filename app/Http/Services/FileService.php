@@ -17,24 +17,40 @@ class FileService
     $files  = File::all();
     $result = [];
     foreach ($files as $file) {
-      
-      array_push($result, new FileDto([
-        'id'         => $file->id,
-        'name'       => $file->name,
-        'path'       => $file->path,
-        'fileTypeId' => $file->file_type_id,
-      ]));
+      $user = $file->user;
+      if ($user != null) {
+        array_push($result, new FileDto([
+          'id'        => $file->id,
+          'name'      => $file->name,
+          'path'      => $file->path,
+          'date'      => $file->created_at,
+          'type'      => $file->type->name,
+          'deletable' => $this->isFileDeletable($file->id),
+          'userId'    => $user->id,
+          'userName'  => $user->first_name . " " . $user->last_name
+        ]));
+      } else {
+        array_push($result, new FileDto([
+          'id'        => $file->id,
+          'name'      => $file->name,
+          'path'      => $file->path,
+          'date'      => $file->created_at,
+          'type'      => $file->type->name,
+          'deletable' => $this->isFileDeletable($file->id),
+        ]));
+      }
     };
     return $result;
   }
 
-  public function userFiles() {
-    $files  = File::all()->where('user_id', Auth::id());
+  public function getAllByUser($userId) {
+    $files  = File::where('user_id', $userId)->orderBy('id')->get();
     $result = [];
     foreach ($files as $file) {
+      $user = $file->user;
       $relation = "";
-      if ($file->taskResult != null) {
-        $relation = "Задача: №" . $file->taskResult->task->id . " - ";
+      if ($file->taskResultFile != null) {
+        $relation = "Задача: №" . $file->taskResultFile->taskResult->task->id . " - ";
       } else if (count($file->taskData) > 0) {
         $relation = "Задачи:";
         $td = $file->taskData;
@@ -52,7 +68,9 @@ class FileService
         'path'      => $file->path,
         'date'      => $file->created_at,
         'type'      => $file->type->name,
-        'deletable' => $this->isFileDeletable($file->id)
+        'deletable' => $this->isFileDeletable($file->id),
+        'userId'    => $user->id,
+        'userName'  => $user->first_name . " " . $user->last_name
       ]));
     };
     return $result;
@@ -67,10 +85,12 @@ class FileService
       return null;
     }
     return new FileDto([
-      'id'         => $file->id,
-      'name'       => $file->name,
-      'path'       => $file->path,
-      'fileTypeId' => $file->type_id,
+      'id'        => $file->id,
+      'name'      => $file->name,
+      'path'      => $file->path,
+      'date'      => $file->created_at,
+      'type'      => $file->type->name,
+      'deletable' => $this->isFileDeletable($file->id)
     ]);
   }
 

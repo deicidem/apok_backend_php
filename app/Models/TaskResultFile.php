@@ -10,7 +10,7 @@ class TaskResultFile extends Model
     use HasFactory;
 
     public function taskResult() {
-        return $this->belongsTo(Task::class);
+        return $this->belongsTo(TaskResult::class);
     }
 
     public function file() {

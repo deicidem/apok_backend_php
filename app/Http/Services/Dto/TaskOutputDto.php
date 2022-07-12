@@ -15,6 +15,8 @@ class TaskOutputDto extends AbstractDto implements DtoInterface
   public $result;
   public $deletable;
   public $updatedAt;
+  public $userId;
+  public $userName;
 
 
   /* @return array */
@@ -28,6 +30,8 @@ class TaskOutputDto extends AbstractDto implements DtoInterface
       'result'    => 'nullable',
       'deletable' => 'required',
       'updatedAt' => 'required',
+      'userId' => 'nullable',
+      'userName' => 'nullable',
     ];
   }
 
@@ -63,6 +67,16 @@ class TaskOutputDto extends AbstractDto implements DtoInterface
     }
     $this->deletable = $data['deletable'];
     $this->updatedAt = $data['updatedAt'];
+    if (array_key_exists('userId', $data)) {
+      $this->userId = $data['userId'];
+    } else {
+      $this->userId = null;
+    }
+    if (array_key_exists('userName', $data)) {
+      $this->userName = $data['userName'];
+    } else {
+      $this->userName = null;
+    }
     return true;
   }
 }

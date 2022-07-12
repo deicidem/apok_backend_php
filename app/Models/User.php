@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
-
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -21,6 +20,9 @@ class User extends Authenticatable implements MustVerifyEmail
     public function role() {
         return $this->belongsTo(Role::class);
     }
+    public function groups() {
+        return $this->belongsToMany(Group::class);
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -31,7 +33,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'last_name',
         'email',
         'password',
-        'role_id'
+        'role_id',
+        'is_blocked'
     ];
 
     /**

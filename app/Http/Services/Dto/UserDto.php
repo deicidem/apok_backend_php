@@ -14,6 +14,7 @@ class UserDto extends AbstractDto implements DtoInterface
   public $email;
   public $role;
   public $date;
+  public $blocked;
 
   /* @return array */
   protected function configureValidatorRules(): array
@@ -25,6 +26,7 @@ class UserDto extends AbstractDto implements DtoInterface
       'email'     => 'nullable',
       'role'      => 'nullable',
       'date'      => 'nullable',
+      'blocked'   => 'nullable',
     ];
   }
 
@@ -44,6 +46,12 @@ class UserDto extends AbstractDto implements DtoInterface
     $this->email     = $data['email'];
     $this->role      = $data['role'];
     $this->date      = $data['date'];
+    if (array_key_exists('id', $data)) {
+      $this->blocked      = $data['blocked'];
+    } else {
+      $this->blocked =  null;
+    }
+  
 
     return true;
   }

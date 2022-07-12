@@ -18,8 +18,8 @@ class File extends Model
     public function plan() {
         return $this->hasOne(Plan::class);
     }
-    public function taskResult() {
-        return $this->hasOne(TaskResult::class);
+    public function taskResultFile() {
+        return $this->hasOne(TaskResultFile::class);
     }
     public function taskResultView() {
         return $this->hasOne(TaskResultView::class);
@@ -31,7 +31,7 @@ class File extends Model
         return $this->belongsTo(User::class);
     }
     protected $table = 'files';
-    protected $touches = ['taskResult'];
+    protected $touches = ['taskResultFile'];
     protected $fillable = [
         'name',
         'path',

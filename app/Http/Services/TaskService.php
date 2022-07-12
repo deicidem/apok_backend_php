@@ -27,8 +27,8 @@ class TaskService
       if ($task->result->files != null) {
         foreach ($task->result->files as $file) {
           array_push($taskResultFiles, [
-            'id'   => $file->file->id,
-            'name' => $file->name,
+            'id'           => $file->file->id,
+            'name'         => $file->name,
             'downloadPath' => "/api/files/download?id=".$file->file->id
           ]);
         }
@@ -44,12 +44,12 @@ class TaskService
           }
 
           array_push($taskResultViews, [
-            'id'          => $view->id,
-            'title'       => $view->title,
-            'type'        => $view->type_id,
-            'previewPath' => '/public'.Storage::url($view->preview->path),
+            'id'           => $view->id,
+            'title'        => $view->title,
+            'type'         => $view->type_id,
+            'previewPath'  => '/public'.Storage::url($view->preview->path),
             'downloadPath' => "/api/files/download?id=".$view->preview_id,
-            'geography'   => $geography
+            'geography'    => $geography
           ]);
         }
       }
@@ -65,18 +65,64 @@ class TaskService
 
   public function getAll()
   {
-    // $tasks  = Task::all()->where('user_id', Auth::id());
     $tasks  = Task::orderBy('id')->get();
     $result = [];
     foreach ($tasks as $task) {
+      $user = $task->user;
       array_push($result, new TaskOutputDto([
-        'id'     => $task->id,
-        'title'  => $task->title,
-        'date'   => $task->created_at,
-        'status' => $task->taskStatus->name,
-        'result' => $this->getTaskResult($task),
+        'id'        => $task->id,
+        'title'     => $task->title,
+        'date'      => $task->created_at,
+        'status'    => $task->taskStatus->name,
+        'result'    => $this->getTaskResult($task),
         'deletable' => $this->isTaskDeletable($task->id),
-        'updatedAt' => $task->updated_at
+        'updatedAt' => $task->updated_at,
+        'userId'    => $user->id,
+        'userName'  => $user->first_name . " " . $user->last_name
+      ]));
+    };
+
+    return $result;
+  }
+
+  public function getBySearch($search)
+  {
+    $tasks  = Task::where('title', 'ilike', '%'.$search.'%')->orderBy('id')->get();
+    $result = [];
+    foreach ($tasks as $task) {
+      $user = $task->user;
+      array_push($result, new TaskOutputDto([
+        'id'        => $task->id,
+        'title'     => $task->title,
+        'date'      => $task->created_at,
+        'status'    => $task->taskStatus->name,
+        'result'    => $this->getTaskResult($task),
+        'deletable' => $this->isTaskDeletable($task->id),
+        'updatedAt' => $task->updated_at,
+        'userId'    => $user->id,
+        'userName'  => $user->first_name . " " . $user->last_name
+      ]));
+    };
+
+    return $result;
+  }
+
+  public function getAllByUser($userId)
+  {
+    $tasks = Task::where('user_id', $userId)->orderBy('id')->get();
+    $result = [];
+    foreach ($tasks as $task) {
+      $user = $task->user;
+      array_push($result, new TaskOutputDto([
+        'id'        => $task->id,
+        'title'     => $task->title,
+        'date'      => $task->created_at,
+        'status'    => $task->taskStatus->name,
+        'result'    => $this->getTaskResult($task),
+        'deletable' => $this->isTaskDeletable($task->id),
+        'updatedAt' => $task->updated_at,
+        'userId'    => $user->id,
+        'userName'  => $user->first_name . " " . $user->last_name
       ]));
     };
 
@@ -91,11 +137,35 @@ class TaskService
       return null;
     }
     $dto = new TaskOutputDto([
-      'id'     => $task->id,
-      'title'  => $task->title,
-      'date'   => $task->created_at,
-      'status' => $task->taskStatus->name,
-      'result' => $this->getTaskResult($task),
+      'id'        => $task->id,
+      'title'     => $task->title,
+      'date'      => $task->created_at,
+      'status'    => $task->taskStatus->name,
+      'result'    => $this->getTaskResult($task),
+      'deletable' => $this->isTaskDeletable($task->id),
+      'updatedAt' => $task->updated_at
+    ]);
+    return $dto;
+  }
+
+  public function getOneByUser($userId, $id)
+  {
+    $task = Task::find(intval($id));
+
+    if (!$task) {
+      return null;
+    }
+
+    if ($task->user_id != $userId) {
+      return null;
+    }
+
+    $dto = new TaskOutputDto([
+      'id'        => $task->id,
+      'title'     => $task->title,
+      'date'      => $task->created_at,
+      'status'    => $task->taskStatus->name,
+      'result'    => $this->getTaskResult($task),
       'deletable' => $this->isTaskDeletable($task->id),
       'updatedAt' => $task->updated_at
     ]);
@@ -109,10 +179,10 @@ class TaskService
     if (!$task) {
       return null;
     }
-    $task->title          = $dto->title;
+    $task->title     = $dto->title;
     $task->status_id = $dto->statusId;
-    $task->dzz_id         = $dto->dzzId;
-    $task->result         = $dto->result;
+    $task->dzz_id    = $dto->dzzId;
+    $task->result    = $dto->result;
     $task->save();
 
     return true;
@@ -158,7 +228,7 @@ class TaskService
   public function post(TaskInputDto $dto)
   {
     $task = Task::Create([
-      'title'     => Plan::Find($dto->planId)->title, 
+      'title'     => Plan::Find($dto->planId)->title,
       'status_id' => 1,
       'plan_id'   => $dto->planId,
       'user_id'   => Auth::id()
@@ -199,8 +269,8 @@ class TaskService
         ]);
 
         $directory = "files/dzzs/" . str_pad($dzz->id, 32, "0", STR_PAD_LEFT);
-        $name = $file->getClientOriginalName();
-        Storage::makeDirectory($directory);
+        $name      = $file->getClientOriginalName();
+        Storage:: makeDirectory($directory);
         $path = Storage::putFileAs($directory, $file, $name);
         $newFile = null;
 
@@ -219,14 +289,14 @@ class TaskService
             'name'    => $name,
             'path'    => $directory,
             'type_id' => 3,
-            'user_id'   => Auth::id()
+            'user_id' => Auth::id()
           ]);
         } else {
           $newFile = File::Create([
             'name'    => $name,
             'path'    => $path,
             'type_id' => 2,
-            'user_id'   => Auth::id()
+            'user_id' => Auth::id()
           ]);
         }
 

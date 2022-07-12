@@ -1,7 +1,6 @@
 <?php
-use App\Models\Dzz;
-use App\Models\Plan;
-use App\Models\TaskStatus;
+
+use App\Models\GroupType;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,13 +15,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tasks', function (Blueprint $table) {
+        Schema::create('groups', function (Blueprint $table) {
             $table->id();
             $table->string('title');
-            $table->foreignIdFor(Plan::class, 'plan_id')->constrained('plans');
-            $table->foreignIdFor(TaskStatus::class, 'status_id')->constrained('task_statuses');
-            $table->foreignIdFor(User::class, 'user_id')->constrained('users')->cascadeOnDelete()
-            ->cascadeOnUpdate();;
+            $table->foreignIdFor(User::class, 'owner_id')->constrained('users')->cascadeOnDelete()->cascadeOnUpdate();
+            $table->foreignIdFor(GroupType::class, 'type_id')->constrained('group_types')->cascadeOnDelete()->cascadeOnUpdate();
             $table->timestamps();
         });
     }
@@ -34,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tasks');
+        Schema::dropIfExists('groups');
     }
 };
