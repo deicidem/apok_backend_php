@@ -1,5 +1,6 @@
 <?php
 
+use App\Logging\Log;
 use Monolog\Handler\NullHandler;
 use Monolog\Handler\StreamHandler;
 use Monolog\Handler\SyslogUdpHandler;
@@ -17,7 +18,7 @@ return [
     |
     */
 
-    'default' => env('LOG_CHANNEL', 'stack'),
+    'default' => env('LOG_CHANNEL', 'database'),
 
     /*
     |--------------------------------------------------------------------------
@@ -114,6 +115,17 @@ return [
         'emergency' => [
             'path' => storage_path('logs/laravel.log'),
         ],
+        'database' => [
+            'driver' => 'custom',
+            'via' => Log::class,
+            'level' => 'debug'
+          ],
+        //   'database' => [
+        //     'driver' => 'custom',
+        //     'handler' => App\Logging\DatabaseLoggingHandler::class,
+        //     'via' => App\Logging\DatabaseCustomLogger::class,
+        //     'level' => 'debug'
+        // ],
     ],
 
 ];

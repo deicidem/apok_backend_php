@@ -6,6 +6,8 @@ use App\Models\Task;
 use App\Http\Services\TaskService;
 use Illuminate\Http\Request;
 use App\Http\Requests\TaskStoreRequest;
+use App\Http\Resources\TaskCollection;
+use App\Http\Resources\TaskResource;
 use App\Http\Services\Dto\FileDto;
 use App\Http\Services\Dto\TaskInputDto;
 use App\Http\Services\FileService;
@@ -36,9 +38,7 @@ class TaskController extends Controller
             $tasks = $this->service->getAll();
         }   
 
-        return response()->json([
-            'tasks' => $tasks
-        ], 200);
+        return new TaskCollection($tasks);
     }
 
     /**
@@ -57,9 +57,7 @@ class TaskController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'task' => $task
-        ], 200);
+        return new TaskResource($task);
     }
 
 

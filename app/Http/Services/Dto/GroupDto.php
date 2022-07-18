@@ -22,7 +22,7 @@ class GroupDto extends AbstractDto implements DtoInterface
       'title'     => 'required',
       'type'      => 'required',
       'ownerId'   => 'required',
-      'ownerName' => 'required',
+      'ownerName' => 'nullable',
     ];
   }
 
@@ -40,8 +40,11 @@ class GroupDto extends AbstractDto implements DtoInterface
     $this->title     = $data['title'];
     $this->type      = $data['type'];
     $this->ownerId   = $data['ownerId'];
-    $this->ownerName = $data['ownerName'];
-   
+    if (array_key_exists('ownerName', $data)) {
+      $this->ownerName = $data['ownerName'];
+    } else {
+      $this->ownerName = null;
+    }
   
 
     return true;

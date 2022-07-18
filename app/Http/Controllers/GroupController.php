@@ -6,7 +6,10 @@ use App\Models\Group;
 use App\Http\Services\GroupService;
 use Illuminate\Http\Request;
 use App\Http\Requests\GroupStoreRequest;
+use App\Http\Resources\GroupCollection;
+use App\Http\Resources\GroupTypeResource;
 use App\Http\Services\Dto\GroupDto;
+use App\Models\GroupType;
 
 class GroupController extends Controller
 {
@@ -39,9 +42,7 @@ class GroupController extends Controller
         }
 
 
-        return response()->json([
-            'groups' => $groups
-        ], 200);
+        return new GroupCollection($groups);
     }
 
     /**
@@ -52,23 +53,17 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $dto = new GroupDto([
-                'title' => $request['title'],
-                'type'  => $request['type'],
-                'ownerId' => $request['ownerId']
-            ]);
+        $dto = new GroupDto([
+            'title'   => $request['title'],
+            'type'    => $request['type'],
+            'ownerId' => $request['ownerId']
+        ]);
 
-            $this->service->create($dto);
+        $group = $this->service->create($dto);
 
-            return response()->json([
-                'message' => "Group created"
-            ], 200);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => 'Something went wrong!'
-            ], 500);
-        }
+        return response()->json([
+            'group' => $group
+        ], 200);
     }
 
     /**
@@ -120,5 +115,25 @@ class GroupController extends Controller
         return response()->json([
             'message' => "Group successfully deleted"
         ], 200);
+    }
+
+    public function addUsers($groupId, Request $request)
+    {
+        $res = $this->service->addUsers($request->all()['users'], $groupId);
+
+        if ($res == null) {
+            return response()->json([
+                'message' => 'Group not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => "Group successfully deleted"
+        ], 200);
+    }
+    public function getTypes()
+    {
+        $types = $this->service->getTypes();
+        return GroupTypeResource::collection($types);
     }
 }

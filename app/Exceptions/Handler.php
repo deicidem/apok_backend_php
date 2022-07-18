@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
+use Illuminate\Support\Facades\Log;
 use Throwable;
 
 class Handler extends ExceptionHandler
@@ -15,7 +16,16 @@ class Handler extends ExceptionHandler
     protected $levels = [
         //
     ];
-
+    public function report(Throwable $exception)
+    {
+        if ($this->shouldntReport($exception)) {
+            return;
+        }
+        Log::channel('daily')->error(
+            $exception->getMessage(),
+            array_merge($this->context(), ['exception' => $exception])
+        );
+    }
     /**
      * A list of the exception types that are not reported.
      *

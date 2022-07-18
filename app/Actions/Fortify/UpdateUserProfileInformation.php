@@ -3,6 +3,7 @@
 namespace App\Actions\Fortify;
 
 use App\Models\User;
+use App\Models\UserLog;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -20,7 +21,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update($user, array $input)
     {
-        if ($input['id'] != null) {
+        if (array_key_exists('id', $input)) {
             $user = User::find($input['id']);
         }
 
@@ -46,6 +47,11 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'email' => $input['email'],
             ])->save();
         }
+        UserLog::create([
+            'user_id' => $user->id,
+            'message' => 'Изменил личную информацию',
+            'type' => 'change'
+          ]);
     }
 
     /**

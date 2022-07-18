@@ -12,7 +12,7 @@ class TaskData extends Model
         return $this->belongsTo(Task::class);
     }
     public function type() {
-        return $this->belongsTo(TaskDataType::class, 'type_id');
+        return $this->belongsTo(DataType::class, 'type_id');
     }
     public function file() {
         return $this->belongsTo(File::class, );

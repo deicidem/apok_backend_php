@@ -22,6 +22,7 @@ return new class extends Migration
                 ->constrained('task_results')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
+                
             $table->foreignIdFor(File::class)
                 ->constrained('files')
                 ->cascadeOnDelete()

@@ -7,6 +7,7 @@ use App\Http\Services\Dto\DtoInterface;
 use App\Http\Services\Dto\DzzDto;
 use App\Http\Services\Dto\FileDto;
 use App\Http\Services\Dto\SearchDto;
+use App\Models\UserLog;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 
@@ -14,66 +15,40 @@ class FileService
 {
   public function getAll()
   {
-    $files  = File::all();
-    $result = [];
-    foreach ($files as $file) {
-      $user = $file->user;
-      if ($user != null) {
-        array_push($result, new FileDto([
-          'id'        => $file->id,
-          'name'      => $file->name,
-          'path'      => $file->path,
-          'date'      => $file->created_at,
-          'type'      => $file->type->name,
-          'deletable' => $this->isFileDeletable($file->id),
-          'userId'    => $user->id,
-          'userName'  => $user->first_name . " " . $user->last_name
-        ]));
-      } else {
-        array_push($result, new FileDto([
-          'id'        => $file->id,
-          'name'      => $file->name,
-          'path'      => $file->path,
-          'date'      => $file->created_at,
-          'type'      => $file->type->name,
-          'deletable' => $this->isFileDeletable($file->id),
-        ]));
-      }
-    };
-    return $result;
+    return File::orderBy('id')->paginate(10);
   }
 
   public function getAllByUser($userId) {
-    $files  = File::where('user_id', $userId)->orderBy('id')->get();
-    $result = [];
-    foreach ($files as $file) {
-      $user = $file->user;
-      $relation = "";
-      if ($file->taskResultFile != null) {
-        $relation = "Задача: №" . $file->taskResultFile->taskResult->task->id . " - ";
-      } else if (count($file->taskData) > 0) {
-        $relation = "Задачи:";
-        $td = $file->taskData;
-        for ($i=0; $i < count($td); $i++) { 
-          if ($i + 1 == count($td)) {
-            $relation = $relation . " №" . $td[$i]->task->id  . " - ";
-          } else {
-            $relation = $relation . " №" . $td[$i]->task->id . ",";
-          }
-        }
-      }
-      array_push($result, new FileDto([
-        'id'        => $file->id,
-        'name'      => $relation . $file->name,
-        'path'      => $file->path,
-        'date'      => $file->created_at,
-        'type'      => $file->type->name,
-        'deletable' => $this->isFileDeletable($file->id),
-        'userId'    => $user->id,
-        'userName'  => $user->first_name . " " . $user->last_name
-      ]));
-    };
-    return $result;
+    $files  = File::where('user_id', $userId)->orderBy('id')->paginate(10);
+    // $result = [];
+    // foreach ($files as $file) {
+    //   $user = $file->user;
+    //   $relation = "";
+    //   if ($file->taskResultFile != null) {
+    //     $relation = "Задача: №" . $file->taskResultFile->taskResult->task->id . " - ";
+    //   } else if (count($file->taskData) > 0) {
+    //     $relation = "Задачи:";
+    //     $td = $file->taskData;
+    //     for ($i=0; $i < count($td); $i++) { 
+    //       if ($i + 1 == count($td)) {
+    //         $relation = $relation . " №" . $td[$i]->task->id  . " - ";
+    //       } else {
+    //         $relation = $relation . " №" . $td[$i]->task->id . ",";
+    //       }
+    //     }
+    //   }
+    //   array_push($result, new FileDto([
+    //     'id'        => $file->id,
+    //     'name'      => $relation . $file->name,
+    //     'path'      => $file->path,
+    //     'date'      => $file->created_at,
+    //     'type'      => $file->type->name,
+    //     'deletable' => $this->isFileDeletable($file->id),
+    //     'userId'    => $user->id,
+    //     'userName'  => $user->first_name . " " . $user->last_name
+    //   ]));
+    // };
+    return $files;
   }
 
   
@@ -84,14 +59,7 @@ class FileService
     if (!$file) {
       return null;
     }
-    return new FileDto([
-      'id'        => $file->id,
-      'name'      => $file->name,
-      'path'      => $file->path,
-      'date'      => $file->created_at,
-      'type'      => $file->type->name,
-      'deletable' => $this->isFileDeletable($file->id)
-    ]);
+    return $file;
   }
 
   public function update(FileDto $dto)
@@ -123,25 +91,6 @@ class FileService
     return true;
   }
 
-  public function isFileDeletable($id) {
-    $file = File::find($id);
-
-    if (!$file || $file->user_id != Auth::id()) {
-      return false;
-    } 
-
-    $deletable = true;
-
-    foreach ($file->taskData as $taskData) {
-      if ($taskData->task->status_id != 3) {
-        $deletable = false;
-        break;
-      }
-    }
-
-    return $deletable;
-  }
-
   public function deleteUserFile($id)
   {
     
@@ -151,6 +100,11 @@ class FileService
     } 
 
     $file->delete();
+    UserLog::create([
+      'user_id' => Auth::id(),
+      'message' => 'Удалил файл '.$file->id,
+      'type' => 'delete'
+    ]);
 
     return true;
   }

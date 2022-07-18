@@ -3,7 +3,7 @@
 use App\Models\File;
 use App\Models\PlanData;
 use App\Models\Task;
-use App\Models\TaskDataType;
+use App\Models\DataType;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -23,7 +23,7 @@ return new class extends Migration
                 ->constrained('tasks')
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
-            $table->foreignIdFor(TaskDataType::class, 'type_id')->constrained("task_data_types");
+            $table->foreignIdFor(DataType::class, 'type_id')->constrained("data_types");
             $table->foreignIdFor(PlanData::class)->constrained("plan_data");
             $table->string('title');
             $table->string('text')->nullable();

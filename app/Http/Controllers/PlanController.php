@@ -6,8 +6,11 @@ use App\Models\Plan;
 use App\Http\Services\PlanService;
 use Illuminate\Http\Request;
 use App\Http\Requests\PlanStoreRequest;
+use App\Http\Resources\PlanCollection;
+use App\Http\Resources\PlanResource;
 use App\Http\Services\Dto\PlanDto;
 use App\Mail\EmailVerification;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class PlanController extends Controller
@@ -30,14 +33,11 @@ class PlanController extends Controller
     }
 
     public function index()
-    {
+    {   
+
         $plans = $this->service->getAll();
 
-
-
-        return response()->json([
-            'plans' => $plans
-        ], 200);
+        return new PlanCollection($plans);
     }
 
 
@@ -83,9 +83,7 @@ class PlanController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'plan' => $plan
-        ], 200);
+        return new PlanResource($plan);
     }
 
 

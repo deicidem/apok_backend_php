@@ -1,6 +1,6 @@
 <?php
 
-use App\Models\PlanDataType;
+use App\Models\DataType;
 use App\Models\Plan;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -19,7 +19,7 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description')->nullable();
-            $table->foreignIdFor(PlanDataType::class, 'type_id')->constrained("plan_data_types");
+            $table->foreignIdFor(DataType::class, 'type_id')->constrained("data_types");
             $table->foreignIdFor(Plan::class)->constrained("plans");
             $table->timestamps();
         });

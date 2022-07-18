@@ -10,7 +10,7 @@ class File extends Model
     use HasFactory;
 
     public function type() {
-        return $this->belongsTo(FileType::class);
+        return $this->belongsTo(DataType::class);
     }
     public function dzz() {
         return $this->hasOne(Dzz::class);

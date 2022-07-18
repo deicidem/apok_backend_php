@@ -13,7 +13,7 @@ class TaskResultView extends Model
         return $this->belongsTo(File::class, 'preview_id');
     }
     public function type() {
-        return $this->belongsTo(TaskResultViewType::class, 'type_id');
+        return $this->belongsTo(DataType::class, 'type_id');
     }
     public function taskResult() {
         return $this->belongsTo(TaskResult::class, 'task_result_id');

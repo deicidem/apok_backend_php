@@ -15,36 +15,7 @@ class PlanService
   public function getAll()
   {
     $plans  = Plan::all();
-    $result = [];
-    foreach ($plans as $plan) {
-      $requirements = [];
-      foreach ($plan->requirements as $req) {
-        array_push($requirements, [
-          'id' => $req->id,
-          'title'  => $req->title,
-          'description' => $req->description
-        ]);
-      }
-      $data = [];
-      foreach ($plan->data as $d) {
-        array_push($data, [
-          'id' => $d->id,
-          'title'  => $d->title,
-          'description' => $d->description,
-          'type' => $d->type_id
-        ]);
-      }
-      array_push($result, new PlanDto([
-        'id'    => $plan->id,
-        'title' => $plan->title,
-        'excerpt' => $plan->excerpt,
-        'description'  => $plan->description,
-        'data' => $data,
-        'requirements' => $requirements,
-        'previewPath' => '/public'.Storage::url($plan->preview->path)
-      ]));
-    };
-    return $result;
+    return $plans;
   }
 
   public function getOne($id)
@@ -53,17 +24,14 @@ class PlanService
     if (!$plan) {
       return null;
     }
-    return new PlanDto([
-      'id'    => $plan->id,
-      'title' => $plan->title,
-      'description'  => $plan->description
-    ]);
+    return $plan;
   }
 
   public function update(PlanDto $dto)
   {
 
     $plan = Plan::find($dto->id);
+
     if (!$plan) {
       return null;
     }

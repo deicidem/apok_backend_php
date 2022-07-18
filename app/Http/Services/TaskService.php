@@ -11,6 +11,7 @@ use App\Models\Plan;
 use App\Models\PlanData;
 use App\Models\TaskData;
 use App\Models\TaskResultView;
+use App\Models\UserLog;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -18,134 +19,29 @@ use InvalidArgumentException;
 
 class TaskService
 {
-  private function getTaskResult($task)
-  {
-    $taskResultFiles = [];
-    $taskResultViews = [];
-
-    if ($task->result != null) {
-      if ($task->result->files != null) {
-        foreach ($task->result->files as $file) {
-          array_push($taskResultFiles, [
-            'id'           => $file->file->id,
-            'name'         => $file->name,
-            'downloadPath' => "/api/files/download?id=".$file->file->id
-          ]);
-        }
-      }
-
-      if ($task->result->views != null) {
-        foreach ($task->result->views as $view) {
-          $geography = null;
-
-          if ($view->type_id == 2) {
-            $geographyRaw = TaskResultView::selectRaw('ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography, id')->where('id', $view->id)->get();
-            $geography    = json_decode($geographyRaw[0]->geography);
-          }
-
-          array_push($taskResultViews, [
-            'id'           => $view->id,
-            'title'        => $view->title,
-            'type'         => $view->type_id,
-            'previewPath'  => '/public'.Storage::url($view->preview->path),
-            'downloadPath' => "/api/files/download?id=".$view->preview_id,
-            'geography'    => $geography
-          ]);
-        }
-      }
-    }
-    if (count($taskResultFiles) == 0 && count($taskResultViews) == 0) {
-      return null;
-    }
-    return [
-      'views' => $taskResultViews,
-      'files' => $taskResultFiles
-    ];
-  }
-
   public function getAll()
   {
-    $tasks  = Task::orderBy('id')->get();
-    $result = [];
-    foreach ($tasks as $task) {
-      $user = $task->user;
-      array_push($result, new TaskOutputDto([
-        'id'        => $task->id,
-        'title'     => $task->title,
-        'date'      => $task->created_at,
-        'status'    => $task->taskStatus->name,
-        'result'    => $this->getTaskResult($task),
-        'deletable' => $this->isTaskDeletable($task->id),
-        'updatedAt' => $task->updated_at,
-        'userId'    => $user->id,
-        'userName'  => $user->first_name . " " . $user->last_name
-      ]));
-    };
-
-    return $result;
+    return  Task::orderBy('id')->paginate(10);
   }
 
   public function getBySearch($search)
   {
-    $tasks  = Task::where('title', 'ilike', '%'.$search.'%')->orderBy('id')->get();
-    $result = [];
-    foreach ($tasks as $task) {
-      $user = $task->user;
-      array_push($result, new TaskOutputDto([
-        'id'        => $task->id,
-        'title'     => $task->title,
-        'date'      => $task->created_at,
-        'status'    => $task->taskStatus->name,
-        'result'    => $this->getTaskResult($task),
-        'deletable' => $this->isTaskDeletable($task->id),
-        'updatedAt' => $task->updated_at,
-        'userId'    => $user->id,
-        'userName'  => $user->first_name . " " . $user->last_name
-      ]));
-    };
-
-    return $result;
+    return  Task::where('title', 'ilike', '%'.$search.'%')->orderBy('id')->paginate(10);
   }
 
   public function getAllByUser($userId)
   {
-    $tasks = Task::where('user_id', $userId)->orderBy('id')->get();
-    $result = [];
-    foreach ($tasks as $task) {
-      $user = $task->user;
-      array_push($result, new TaskOutputDto([
-        'id'        => $task->id,
-        'title'     => $task->title,
-        'date'      => $task->created_at,
-        'status'    => $task->taskStatus->name,
-        'result'    => $this->getTaskResult($task),
-        'deletable' => $this->isTaskDeletable($task->id),
-        'updatedAt' => $task->updated_at,
-        'userId'    => $user->id,
-        'userName'  => $user->first_name . " " . $user->last_name
-      ]));
-    };
-
-    return $result;
+    return  Task::where('user_id', $userId)->orderBy('id')->paginate(10);
   }
 
   public function getOne($id)
   {
-    $task = Task::find(intval($id));
+    $task = Task::find($id);
 
     if (!$task) {
       return null;
     }
-    $dto = new TaskOutputDto([
-      'id'        => $task->id,
-      'title'     => $task->title,
-      'date'      => $task->created_at,
-      'status'    => $task->taskStatus->name,
-      'result'    => $this->getTaskResult($task),
-      'deletable' => $this->isTaskDeletable($task->id),
-      'updatedAt' => $task->updated_at
-    ]);
-    return $dto;
+    return $task;
   }
 
   public function getOneByUser($userId, $id)
@@ -160,16 +56,7 @@ class TaskService
       return null;
     }
 
-    $dto = new TaskOutputDto([
-      'id'        => $task->id,
-      'title'     => $task->title,
-      'date'      => $task->created_at,
-      'status'    => $task->taskStatus->name,
-      'result'    => $this->getTaskResult($task),
-      'deletable' => $this->isTaskDeletable($task->id),
-      'updatedAt' => $task->updated_at
-    ]);
-    return $dto;
+    return $task;
   }
 
   public function update(TaskOutputDto $dto)
@@ -199,16 +86,6 @@ class TaskService
     return true;
   }
 
-  public function isTaskDeletable($id) {
-    $task = Task::find($id);
-
-    if (!$task) {
-      return false;
-    } 
-
-    return $task->status_id == 3 || $task->status_id == 1 ? true : false;
-  }
-
   public function deleteUserTask($id)
   {
     
@@ -217,33 +94,48 @@ class TaskService
     if (!$task || $task->user_id != Auth::id()) {
       return null;
     } 
-
+    
     $task->delete();
-
+    UserLog::create([
+      'user_id' => Auth::id(),
+      'message' => 'Удалил задачу '.$task->id,
+      'type' => 'delete'
+    ]);
     return true;
   }
 
 
 
-  public function post(TaskInputDto $dto)
+  public function post(TaskInputDto $dto, $userId)
   {
     $task = Task::Create([
       'title'     => Plan::Find($dto->planId)->title,
       'status_id' => 1,
       'plan_id'   => $dto->planId,
-      'user_id'   => Auth::id()
+      'user_id'   => $userId
     ]);
 
+    UserLog::create([
+      'user_id' => $userId,
+      'message' => 'Запланировал задачу '.$task->id,
+      'type' => 'store'
+    ]);
+    
     $taskId = $task->id;
 
     if ($dto->params != null) {
       foreach ($dto->params as $key => $param) {
         TaskData::Create([
           'task_id'      => $taskId,
-          'type_id'      => 1,
+          'type_id'      => 4,
           'title'        => PlanData::Find($dto->links->params[$key])->title,
           'text'         => $param,
           'plan_data_id' => $dto->links->params[$key]
+        ]);
+        UserLog::create([
+          'user_id' => $userId,
+          'message' => 'Добавил данные для задачи '.$taskId,
+          'type' => 'store'
         ]);
       }
     }
@@ -259,6 +151,11 @@ class TaskService
           'file_id'      => $file->id,
           'plan_data_id' => $dto->links->dzzs[$key]
         ]);
+        UserLog::create([
+          'user_id' => $userId,
+          'message' => 'Добавил данные для задачи '.$taskId,
+          'type' => 'store'
+        ]);
       }
     }
 
@@ -267,7 +164,11 @@ class TaskService
         $dzz =  Dzz::Create([
           'name' => 'user dzz',
         ]);
-
+        UserLog::create([
+          'user_id' => $userId,
+          'message' => 'Добавил снимок '.$dzz->id,
+          'type' => 'store'
+        ]);
         $directory = "files/dzzs/" . str_pad($dzz->id, 32, "0", STR_PAD_LEFT);
         $name      = $file->getClientOriginalName();
         Storage:: makeDirectory($directory);
@@ -289,26 +190,36 @@ class TaskService
             'name'    => $name,
             'path'    => $directory,
             'type_id' => 3,
-            'user_id' => Auth::id()
+            'user_id' => $userId
           ]);
+          
         } else {
           $newFile = File::Create([
             'name'    => $name,
             'path'    => $path,
             'type_id' => 2,
-            'user_id' => Auth::id()
+            'user_id' => $userId
           ]);
         }
 
         $dzz->directory_id = $newFile->id;
         $dzz->save();
-
+        UserLog::create([
+          'user_id' => $userId,
+          'message' => 'Добавил файл '.$newFile->id,
+          'type' => 'store'
+        ]);
         TaskData::Create([
           'task_id'      => $taskId,
           'type_id'      => 2,
           'title'        => PlanData::Find($dto->links->files[$key])->title,
           'file_id'      => $newFile->id,
           'plan_data_id' => $dto->links->files[$key]
+        ]);
+        UserLog::create([
+          'user_id' => $userId,
+          'message' => 'Добавил данные для задачи '.$taskId,
+          'type' => 'store'
         ]);
       }
     }
@@ -327,6 +238,11 @@ class TaskService
           'title'        => PlanData::Find($dto->links->vectors[$key])->title,
           'geography'    => DB::raw("ST_GeomFromGeoJSON('$polygon')"),
           'plan_data_id' => $dto->links->vectors[$key]
+        ]);
+        UserLog::create([
+          'user_id' => $userId,
+          'message' => 'Добавил данные для задачи '.$taskId,
+          'type' => 'store'
         ]);
       }
     }

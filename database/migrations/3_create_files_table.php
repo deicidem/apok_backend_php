@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\DataType;
 use App\Models\Dzz;
 use App\Models\Plan;
 use App\Models\TaskResult;
@@ -23,7 +24,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('path');
-            $table->foreignIdFor(FileType::class, 'type_id')->constrained('file_types');
+            $table->foreignIdFor(DataType::class, 'type_id')->constrained('data_types');
             $table->foreignIdFor(User::class)->nullable()->constrained("users")->cascadeOnDelete()
             ->cascadeOnUpdate();;
             $table->timestamps();

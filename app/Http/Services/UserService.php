@@ -7,72 +7,63 @@ use App\Http\Services\Dto\DtoInterface;
 use App\Http\Services\Dto\DzzDto;
 use App\Http\Services\Dto\SearchDto;
 use App\Http\Services\Dto\UserDto;
+use App\Models\Group;
+use App\Models\GroupUser;
+use App\Models\UserLog;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 class UserService
 {
   public function getAll()
-  {
-    $users  = User::orderBy('id')->get();
-    $result = [];
-    foreach ($users as $user) {
-      array_push($result, new UserDto([
-        'id'        => $user->id,
-        'firstName' => $user->first_name,
-        'lastName'  => $user->last_name,
-        'email'     => $user->email,
-        'date'      => $user->created_at,
-        'role'      => $user->role->name,
-        'blocked'   => $user->is_blocked
-      ]));
-    };
-    return $result;
+  {  
+    return User::orderBy('id')->paginate(10);
   }
 
   public function getBySearch($search)
   {
-    $users = User::where('first_name', 'ilike', '%'.$search.'%')
+    
+    return User::where('first_name', 'ilike', '%'.$search.'%')
       ->orWhere('last_name', 'ilike', '%'.$search.'%')
       ->orWhere('email', 'ilike', '%'.$search.'%')
       ->orWhere('id', 'ilike', '%'.$search.'%')
       ->orWhere('created_at', 'ilike', '%'.$search.'%')
-      ->orderBy('id')->get();
-    $result = [];
-    foreach ($users as $user) {
-      array_push($result, new UserDto([
-        'id'        => $user->id,
-        'firstName' => $user->first_name,
-        'lastName'  => $user->last_name,
-        'email'     => $user->email,
-        'date'      => $user->created_at,
-        'role'      => $user->role->name,
-        'blocked'   => $user->is_blocked
-      ]));
-    };
-    return $result;
-  }
+      ->orderBy('id')->paginate(10);
 
+  }
+  public function getAllByGroup($groupId)
+  {
+    return Group::Find($groupId)->users()->paginate(10);
+  }
   public function getOne($id)
   {
     $user = User::find($id);
     if (!$user) {
       return null;
     }
-    return new UserDto([
-      'id'        => $user->id,
-      'firstName' => $user->first_name,
-      'lastName'  => $user->last_name,
-      'email'     => $user->email,
-      'date'      => $user->created_at,
-      'role'      => $user->role->name,
-      'blocked'   => $user->is_blocked
-    ]);
+    return $user;
+  }
+
+  public function getLogs($id) {
+    if (UserLog::where('user_id', $id)->exists()) {
+      return UserLog::where('user_id', $id)->orderBy('created_at', "DESC")->paginate(10);
+    } else {
+      return null;
+    }
+    // foreach ($logs as $log) { 
+    //   array_push($result, [
+    //     'date' => $log->created_at,
+    //     'message' => $log->message,
+    //     'type' => $log->type
+    //   ]);
+    // }
+    // return $result;
   }
 
   public function delete($id)
   {
     $user = User::find($id);
+    
     if (!$user) {
       return null;
     }
@@ -89,7 +80,11 @@ class UserService
     }
     $user->is_blocked = true;
     $user->save();
-
+    UserLog::create([
+      'user_id' => $id,
+      'message' => 'Был заблокирован',
+      'type' => 'block'
+    ]);
     return true;
   }
 
@@ -101,7 +96,11 @@ class UserService
     }
     $user->is_blocked = false;
     $user->save();
-
+    UserLog::create([
+      'user_id' => $id,
+      'message' => 'Был разблокирован',
+      'type' => 'block'
+    ]);
     return true;
   }
 
@@ -114,14 +113,11 @@ class UserService
       'role_id'    => 2
     ]);
     $user->sendEmailVerificationNotification();
-    return new UserDto([
-      'id'        => $user->id,
-      'firstName' => $user->first_name,
-      'lastName'  => $user->last_name,
-      'email'     => $user->email,
-      'date'      => $user->created_at,
-      'role'      => $user->role->name,
-      'blocked'   => $user->is_blocked
+    UserLog::create([
+      'user_id' => $user->id,
+      'message' => 'Был зарегистрирован',
+      'type' => 'store'
     ]);
+    return $user;
   }
 }

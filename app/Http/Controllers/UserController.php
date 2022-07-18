@@ -2,12 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FileCollection;
+use App\Http\Resources\GroupCollection;
+use App\Http\Resources\GroupResource;
+use App\Http\Resources\TaskCollection;
+use App\Http\Resources\TaskResource;
+use App\Http\Resources\UserCollection;
+use App\Http\Resources\UserLogsCollection;
+use App\Http\Resources\UserResource;
 use App\Http\Services\Dto\TaskInputDto;
+use App\Http\Services\Dto\GroupDto;
 use App\Http\Services\TaskService;
 use App\Http\Services\UserService;
 use App\Http\Services\FileService;
+use App\Http\Services\GroupService;
+use App\Models\UserLog;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Rules\Password;
@@ -26,34 +39,35 @@ class UserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function __construct(UserService $userService, TaskService $taskService, FileService $fileService)
+    public function __construct(UserService $userService, TaskService $taskService, FileService $fileService, GroupService $groupService)
     {
         $this->userService = $userService;
         $this->taskService = $taskService;
         $this->fileService = $fileService;
+        $this->groupService = $groupService;
     }
 
     public function index(Request $request)
     {
-        $users = null;  
-        if ($request->has('search')) {
+        $users = null;
+
+        if ($request->has('groupId'))  {
+            $users = $this->userService->getAllByGroup($request->groupId);
+        }else  if ($request->has('search')) {
             $users = $this->userService->getBySearch($request->search);
         } else {
             $users = $this->userService->getAll();
         }
 
-        return response()->json([
-            'users' => $users
-        ], 200);
+        return new UserCollection($users);
+
     }
 
     public function auth()
     {
         $user = $this->userService->getOne(Auth::id());
 
-        return response()->json([
-            'user' => $user
-        ], 200);
+        return new UserResource($user);
     }
     public function checkAuth()
     {
@@ -80,11 +94,35 @@ class UserController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'user' => $user
-        ], 200);
+        return new UserResource($user);
     }
 
+    public function getLogs($id) {
+        $logs = $this->userService->getLogs($id);
+        if ($logs == null) {
+            return response()->json([
+                'message' => 'Logs Not Found.'
+            ], 404);
+        }
+        return new UserLogsCollection($logs);
+    }
+
+    public function logout(Request $request) {
+        $userId = Auth::id();
+        Auth::logout();
+
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
+        UserLog::create([
+            'user_id' => $userId,
+            'message' => "Пользователь вышел из системы",
+            'type' => 'logout'
+        ]);
+
+        return  new JsonResponse('', 204);
+    }
 
     public function block($id)
     {
@@ -141,18 +179,13 @@ class UserController extends Controller
 
         $user = $this->userService->create($input);
         
-        return response()->json([
-            'user' => $user,
-        ]);
+        return new UserResource($user);
     }
 
     public function getTasks()
     {
         $tasks = $this->taskService->getAllByUser(Auth::id());
-
-        return response()->json([
-            'tasks' => $tasks
-        ], 200);
+        return new TaskCollection($tasks);
     }
     public function getTask($id)
     {
@@ -164,9 +197,7 @@ class UserController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'task' => $task
-        ], 200);
+        return new TaskResource($task);
     }
     /**
      * Store a newly created resource in storage.
@@ -186,7 +217,7 @@ class UserController extends Controller
                 'links'   => json_decode($request['links']),
             ]);
 
-            $this->taskService->post($dto);
+            $this->taskService->post($dto, Auth::id());
 
             return response()->json([
                 'message' => "Task created"
@@ -251,9 +282,7 @@ class UserController extends Controller
     
         $files = $this->fileService->getAllByUser(Auth::id());
 
-        return response()->json([
-            'files' => $files
-        ]);
+        return new FileCollection($files);
     }
 
     public function deleteFile($id)
@@ -301,4 +330,101 @@ class UserController extends Controller
         ], 200);
     }
     
+    public function getGroups(Request $request)
+    {
+        $groups = null;
+        if ($request->has('owner') && $request->owner) {
+            $groups = $this->groupService->getAllByOwner(Auth::id());
+        } else {
+            $groups = $this->groupService->getAllByUser(Auth::id());
+        }
+        return new GroupCollection($groups);
+    }
+    public function getGroup($id)
+    {
+        $group = $this->groupService->getOneByUser(Auth::id(), $id);
+
+        if ($group == null) {
+            return response()->json([
+                'message' => 'Group Not Found.'
+            ], 404);
+        }
+
+        return new GroupResource($group);
+    }
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function createGroup(Request $request)
+    {
+        try {
+            $dto = new GroupDto([
+                'title'   => $request['title'],
+                'type'    => $request['type'],
+                'ownerId' => Auth::id()
+            ]);
+
+            $this->groupService->createGroup($dto);
+
+            return response()->json([
+                'message' => "Group created"
+            ], 201);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function deleteGroups(Request $request)
+    {
+        $deletable = [];
+
+        foreach ($request['ids'] as $id) {
+            $res = $this->groupService->isGroupDeletable($id);
+            array_push($deletable, [
+                'id' => $id,
+                'delete' => $res
+            ]);
+        }
+
+        foreach ($deletable as $group) {
+            if ($group['delete']) {
+                $res = $this->groupService->deleteUserGroup($group['id']);
+                if ($res == null) {
+                    return response()->json([
+                        'message' => 'Group  not found'
+                    ], 404);
+                }
+            }
+        }
+
+        return response()->json([
+            "deleted" => $deletable
+        ], 200);
+    }
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function deleteGroup($id)
+    {
+        $res = $this->service->delete($id);
+
+        if ($res == null) {
+            return response()->json([
+                'message' => 'Group not found'
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => "Group successfully deleted"
+        ], 200);
+    }
+
 }

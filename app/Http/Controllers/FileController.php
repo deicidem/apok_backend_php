@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\FileCollection;
 use App\Http\Services\Dto\FileDto;
 use App\Http\Services\FileService;
 use App\Models\Dzz;
@@ -33,9 +34,7 @@ class FileController extends Controller
             $files = $this->service->getAll();
         }   
 
-        return response()->json([
-            'files' => $files
-        ], 200);
+        return new FileCollection($files);
     }
 
     

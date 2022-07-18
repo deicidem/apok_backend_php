@@ -10,7 +10,7 @@ class PlanData extends Model
     use HasFactory;
 
     public function type() {
-        return $this->belongsTo(PlanDataType::class, 'type_id');
+        return $this->belongsTo(DataType::class, 'type_id');
     }
 
     public function plan() {

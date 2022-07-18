@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\DzzCollection;
 use App\Http\Services\Dto\SearchDto;
 use App\Models\Dzz;
 use App\Models\Sensor;
@@ -30,11 +31,9 @@ class DzzController extends Controller
         $params = $request->all();
 
         $searchDto = new SearchDto($params);
-        $data      = $this->dzzService->get($searchDto);
+        $dzzs      = $this->dzzService->get($searchDto);
 
-        return response()->json([
-            'dzzs' => $data
-        ], 200);
+        return new DzzCollection($dzzs);
     }
 
     /**
