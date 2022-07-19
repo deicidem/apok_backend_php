@@ -17,7 +17,7 @@ class TaskResultFileResource extends JsonResource
         return [
             'id'           => $this->file->id,
             'name'         => $this->name,
-            'downloadPath' => "/api/files/download?id=".$this->file->id
+            'downloadPath' => "/api/download?id=".$this->file->id
         ];
     }
     public static $wrap = null;

@@ -51,22 +51,21 @@ class UserController extends Controller
     {
         $users = null;
 
-        if ($request->has('groupId'))  {
-            $users = $this->userService->getAllByGroup($request->groupId);
-        }else  if ($request->has('search')) {
-            $users = $this->userService->getBySearch($request->search);
-        } else {
-            $users = $this->userService->getAll();
-        }
-
+        // if ($request->has('groupId'))  {
+        //     $users = $this->userService->getAllByGroup($request->groupId);
+        // }else  if ($request->has('search')) {
+        //     $users = $this->userService->getBySearch($request->search);
+        // } else {
+        //     $users = $this->userService->getAll();
+        // }
+        $users = $this->userService->getAll($request->search, $request->groupId);
         return new UserCollection($users);
 
     }
 
     public function auth()
     {
-        $user = $this->userService->getOne(Auth::id());
-
+        $user = Auth::user();
         return new UserResource($user);
     }
     public function checkAuth()
@@ -182,9 +181,9 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function getTasks()
+    public function getTasks(Request $request)
     {
-        $tasks = $this->taskService->getAllByUser(Auth::id());
+        $tasks = $this->taskService->getAll($request->search, Auth::id());
         return new TaskCollection($tasks);
     }
     public function getTask($id)
@@ -278,9 +277,9 @@ class UserController extends Controller
     }
 
 
-    public function getFiles() {
+    public function getFiles(Request $request) {
     
-        $files = $this->fileService->getAllByUser(Auth::id());
+        $files = $this->fileService->getAll($request->search, Auth::id());
 
         return new FileCollection($files);
     }
@@ -333,10 +332,10 @@ class UserController extends Controller
     public function getGroups(Request $request)
     {
         $groups = null;
-        if ($request->has('owner') && $request->owner) {
-            $groups = $this->groupService->getAllByOwner(Auth::id());
+        if ($request->owner) {
+            $groups = $this->groupService->getAll($request->search, null, Auth::id());
         } else {
-            $groups = $this->groupService->getAllByUser(Auth::id());
+            $groups = $this->groupService->getAll($request->search, Auth::id(), null);
         }
         return new GroupCollection($groups);
     }

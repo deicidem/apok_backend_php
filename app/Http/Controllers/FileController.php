@@ -27,13 +27,7 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
-        $files = null;
-        if ($request->has('userId')) {
-            $files = $this->service->getAllByUser($request->userId);
-        } else {
-            $files = $this->service->getAll();
-        }   
-
+        $files = $this->service->getAll($request->search, $request->userId);
         return new FileCollection($files);
     }
 
@@ -223,7 +217,7 @@ class FileController extends Controller
 
                       
 
-            Storage::copy('files/result/preview.json', $temp."/temp.geojson");
+            Storage::copy('public/result/preview.json', $temp."/temp.geojson");
             Storage::delete($filePath);
             $res = null;
             if (Storage::exists($temp."/temp.geojson")) {
@@ -248,8 +242,8 @@ class FileController extends Controller
 
     public function download(Request $request)
     {
-        $file = File::find($request['id']);
-        if ($file->type_id == 3) {
+        $file = File::find($request->id);
+        if ($file->type_id == 5) {
             $zip_file = 'archive.zip';
             $zip = new \ZipArchive();
 

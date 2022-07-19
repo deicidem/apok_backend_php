@@ -13,13 +13,27 @@ use InvalidArgumentException;
 
 class FileService
 {
-  public function getAll()
+  public function getAll($search, $userId)
   {
-    return File::orderBy('id')->paginate(10);
+    $query = File::query();
+
+    $query->when($userId != null, function ($q) use ($userId) {
+      return $q->where('user_id', $userId);
+    });
+
+    $query->when($search != null, function ($q) use ($search) {
+      return $q->where(function ($query) use ($search) {
+        return $query->where('name', 'ilike', '%'.$search.'%')
+          ->orWhere('id', 'ilike', '%'.$search.'%')
+          ->orWhere('created_at', 'ilike', '%'.$search.'%');
+      });
+    });
+    
+    return  $query->orderBy('id')->paginate(5);
   }
 
   public function getAllByUser($userId) {
-    $files  = File::where('user_id', $userId)->orderBy('id')->paginate(10);
+    $files  = File::where('user_id', $userId)->orderBy('id')->paginate(15);
     // $result = [];
     // foreach ($files as $file) {
     //   $user = $file->user;

@@ -23,7 +23,7 @@ class FileResource extends JsonResource
           'date'      => $this->created_at,
           'type'      => $this->type->name,
           'deletable' => $this->isFileDeletable($this->id),
-          'user'      => $this->when(Auth::user()->role_id == 1, new UserResource($this->user))
+          'user'      => new UserResource($this->user)
        ];
     }
 

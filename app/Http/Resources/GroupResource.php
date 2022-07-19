@@ -17,8 +17,6 @@ class GroupResource extends JsonResource
         return [
             'id'        => $this->id,
             'title'     => $this->title,
-            'ownerId'   => $this->owner_id,
-            'ownerName' => $this->owner->first_name . " " . $this->owner->last_name,
             'type'      => $this->type->title,
             'owner' => new UserResource($this->owner)
           ];

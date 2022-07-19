@@ -19,19 +19,23 @@ use InvalidArgumentException;
 
 class TaskService
 {
-  public function getAll()
+  public function getAll($search, $userId)
   {
-    return  Task::orderBy('id')->paginate(10);
-  }
+    $query = Task::query();
 
-  public function getBySearch($search)
-  {
-    return  Task::where('title', 'ilike', '%'.$search.'%')->orderBy('id')->paginate(10);
-  }
+    $query->when($userId != null, function ($q) use ($userId) {
+      return $q->where('user_id', $userId);
+    });
 
-  public function getAllByUser($userId)
-  {
-    return  Task::where('user_id', $userId)->orderBy('id')->paginate(10);
+    $query->when($search != null, function ($q) use ($search) {
+      return $q->where(function ($query) use ($search) {
+        return $query->where('title', 'ilike', '%'.$search.'%')
+          ->orWhere('id', 'ilike', '%'.$search.'%')
+          ->orWhere('created_at', 'ilike', '%'.$search.'%');
+      });
+    });
+
+    return  $query->orderBy('id')->paginate(15);
   }
 
   public function getOne($id)

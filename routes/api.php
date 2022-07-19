@@ -93,7 +93,7 @@ Route::group(['middleware' => ['auth:sanctum', 'not-blocked']], function () {
 
   Route::resource('alerts', AlertController::class);
 
-  Route::get('files/download', [FileController::class, 'download']);
+  Route::get('download', [FileController::class, 'download']);
 
   Route::get('user/files', [UserController::class, 'getFiles']);
   Route::delete('user/files', [UserController::class, 'deleteFiles']);

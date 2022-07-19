@@ -22,7 +22,7 @@ class TaskResultViewResource extends JsonResource
             'title'        => $this->title,
             'type'         => $this->type_id,
             'previewPath'  => '/public'.Storage::url($this->preview->path),
-            'downloadPath' => "/api/files/download?id=".$this->preview_id,
+            'downloadPath' => "/api/download?id=".$this->preview_id,
             'geography'    => json_decode($geography)
         ];
     }

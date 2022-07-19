@@ -32,11 +32,7 @@ class TaskController extends Controller
 
     public function index(Request $request)
     {
-        if ($request->has('userId')) {
-            $tasks = $this->service->getAllByUser($request->userId);
-        } else {
-            $tasks = $this->service->getAll();
-        }   
+        $tasks = $this->service->getAll($request->search, $request->userId); 
 
         return new TaskCollection($tasks);
     }

@@ -17,79 +17,29 @@ use InvalidArgumentException;
 
 class GroupService
 {
-  public function getAll()
+  public function getAll($search, $userId, $ownerId )
   {
-    return Group::orderBy('id')->paginate(10);
-    // $result = [];
-    // foreach ($groups as $group) {
-    //   array_push($result, new GroupDto([
-    //     'id'        => $group->id,
-    //     'title'     => $group->title,
-    //     'ownerId'   => $group->owner_id,
-    //     'ownerName' => $group->owner->first_name . " " . $group->owner->last_name,
-    //     'type'      => $group->type->title
-    //   ]));
-    // };
-    // return $result;
+    $query = Group::query();
+
+    if ($userId != null) {
+      $query = User::Find($userId)->groups()->getQuery();
+    } 
+
+    $query->when($ownerId != null, function($q) use ($ownerId) {
+      return $q->where('owner_id', $ownerId);
+    });
+
+    $query->when($search != null, function($q) use ($search) {
+      return $q->where(function ($query) use ($search) {
+        return $query->where('title', 'ilike', '%'.$search.'%')
+          ->orWhere('id', 'ilike', '%'.$search.'%')
+          ->orWhere('created_at', 'ilike', '%'.$search.'%');
+      });
+    });
+
+    return $query->orderBy('id')->paginate(15);
   }
 
-  public function getAllByOwner($userId)
-  {
-    return Group::where('owner_id', $userId)->orderBy('id')->paginate(10);
-    // $result = [];
-    // foreach ($groups as $group) {
-    //   array_push($result, new GroupDto([
-    //     'id'        => $group->id,
-    //     'title'     => $group->title,
-    //     'ownerId'   => $group->owner_id,
-    //     'ownerName' => $group->owner->first_name . " " . $group->owner->last_name,
-    //     'type'      => $group->type->title
-    //   ]));
-    // };
-    // return $result;
-  }
-
-  public function getAllByUser($userId)
-  {
-    return User::Find($userId)->groups()->paginate(10);
-    // $groups = GroupUser::where('user_id', $userId)->orderBy('group_id')->get();
-    // $result = [];
-    // foreach ($groups as $group) {
-    //   $g = $group->group;
-    //   array_push($result, new GroupDto([
-    //     'id'        => $g->id,
-    //     'title'     => $g->title,
-    //     'ownerId'   => $g->owner_id,
-    //     'ownerName' => $g->owner->first_name . " " . $g->owner->last_name,
-    //     'type'      => $g->type->title
-    //   ]));
-    // };
-    // return $result;
-  }
-
-  public function getBySearch($search)
-  {
-    Group::orderBy('id')->paginate(10);
-    // $groups = Group::where('first_name', 'ilike', '%' . $search . '%')
-    //   ->orWhere('last_name', 'ilike', '%' . $search . '%')
-    //   ->orWhere('email', 'ilike', '%' . $search . '%')
-    //   ->orWhere('id', 'ilike', '%' . $search . '%')
-    //   ->orWhere('created_at', 'ilike', '%' . $search . '%')
-    //   ->orderBy('id')->get();
-    // $result = [];
-    // foreach ($groups as $group) {
-    //   array_push($result, new GroupDto([
-    //     'id'        => $group->id,
-    //     'firstName' => $group->first_name,
-    //     'lastName'  => $group->last_name,
-    //     'email'     => $group->email,
-    //     'date'      => $group->created_at,
-    //     'role'      => $group->role->name,
-    //     'blocked'   => $group->is_blocked
-    //   ]));
-    // };
-    // return $result;
-  }
 
   public function getOne($id)
   {

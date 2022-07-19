@@ -26,7 +26,7 @@ class DzzService
             ->whereRaw("EXTRACT(MONTH FROM date) IN ($placeholders)", $searchDto->months)
             ->whereRaw("ST_Intersects(geography, ST_GeomFromGeoJSON(?))", $polygon)
             ->selectRaw("*, ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography")
-            ->paginate(10);
+            ->paginate(2);
 
         // print_r($dzzs[0]->processingLevel);
         // $data = [];

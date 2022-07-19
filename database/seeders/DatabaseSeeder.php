@@ -93,7 +93,7 @@ class DatabaseSeeder extends Seeder
             'email'      => 'test6@example.ru',
             'role_id'    => 2
         ]);
-        User:: factory(50)->create();
+        User::factory(200)->create();
 
         GroupType::create([
             'title' => "Открытая"
@@ -117,7 +117,81 @@ class DatabaseSeeder extends Seeder
             'owner_id' => 1,
             'type_id'     => 1
         ]);
-
+        Group::create([
+            'title'    => 'ЦИТ',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'НИИ КС',
+            'owner_id' => 2,
+            'type_id'     => 2
+        ]);
+        Group::create([
+            'title'    => 'Студенты',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'ЦИТ',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'НИИ КС',
+            'owner_id' => 2,
+            'type_id'     => 2
+        ]);
+        Group::create([
+            'title'    => 'Студенты',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'ЦИТ',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'НИИ КС',
+            'owner_id' => 2,
+            'type_id'     => 2
+        ]);
+        Group::create([
+            'title'    => 'Студенты',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'ЦИТ',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'НИИ КС',
+            'owner_id' => 2,
+            'type_id'     => 2
+        ]);
+        Group::create([
+            'title'    => 'Студенты',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'ЦИТ',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
+        Group::create([
+            'title'    => 'НИИ КС',
+            'owner_id' => 2,
+            'type_id'     => 2
+        ]);
+        Group::create([
+            'title'    => 'Студенты',
+            'owner_id' => 1,
+            'type_id'     => 1
+        ]);
         GroupUser::create([
             'group_id' => 1,
             'user_id'  => 1
@@ -146,7 +220,82 @@ class DatabaseSeeder extends Seeder
             'group_id' => 3,
             'user_id'  => 1
         ]);
-
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 10
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 11
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 12
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 13
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 14
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 15
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 16
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 17
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 18
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 19
+        ]);
+        GroupUser::create([
+            'group_id' => 1,
+            'user_id'  => 20
+        ]);
+        GroupUser::create([
+            'group_id' => 5,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 6,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 7,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 8,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 9,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 10,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 11,
+            'user_id'  => 1
+        ]);
+        GroupUser::create([
+            'group_id' => 12,
+            'user_id'  => 1
+        ]);
         FileType::Create([
             'name' => 'Вектор'
         ]);
@@ -1181,90 +1330,90 @@ class DatabaseSeeder extends Seeder
         ]);
 
 
-        // Task::Create([
-        //     'title'     => 'Мониторинг состояния посевов',
-        //     'plan_id'   => 1,
-        //     'status_id' => 3,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг содержания азота в сельскохозяйственных растениях',
-        //     'plan_id'   => 1,
-        //     'status_id' => 10,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 1,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг состояния посевов',
-        //     'plan_id'   => 1,
-        //     'status_id' => 1,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 3,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 3,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 3,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 3,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 10,
-        //     'user_id'   => 1
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 20,
-        //     'user_id'   => 2
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 40,
-        //     'user_id'   => 2
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,p
-        //     'status_id' => 10,
-        //     'user_id'   => 2
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 60,
-        //     'user_id'   => 2
-        // ]);
-        // Task::Create([
-        //     'title'     => 'Мониторинг водных объектов',
-        //     'plan_id'   => 2,
-        //     'status_id' => 70,
-        //     'user_id'   => 2
-        // ]);
+        Task::Create([
+            'title'     => 'Мониторинг состояния посевов',
+            'plan_id'   => 1,
+            'status_id' => 3,
+            'user_id'   => 1
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг содержания азота в сельскохозяйственных растениях',
+            'plan_id'   => 1,
+            'status_id' => 10,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 1,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг состояния посевов',
+            'plan_id'   => 1,
+            'status_id' => 1,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 3,
+            'user_id'   => 1
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 3,
+            'user_id'   => 1
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 3,
+            'user_id'   => 1
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 3,
+            'user_id'   => 1
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 10,
+            'user_id'   => 1
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 20,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 40,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 10,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 60,
+            'user_id'   => 2
+        ]);
+        Task::Create([
+            'title'     => 'Мониторинг водных объектов',
+            'plan_id'   => 2,
+            'status_id' => 70,
+            'user_id'   => 2
+        ]);
 
         TaskResult::Create([
             'task_id' => 1,
@@ -1273,27 +1422,27 @@ class DatabaseSeeder extends Seeder
 
         File::Create([
             'name'           => 'Отчет',
-            'type_id'        => 2,
+            'type_id'        => 1,
             'path'           => 'public/result/RGB/Отчет геом.jpg',
             'user_id'        => 1,
         ]);
         File::Create([
             'name'           => 'Подложка',
-            'type_id'        => 1,
+            'type_id'        => 2,
             'path'           => 'public/result/Превью подложка.png',
-            'user_id'        => 2,
+            'user_id'        => 1,
         ]);
         File::Create([
             'name'           => 'Векторы',
-            'type_id'        => 1,
+            'type_id'        => 2,
             'path'           => 'public/result/Превью векторов.png',
-            'user_id'        => 2,
+            'user_id'        => 1,
         ]);
         File::Create([
             'name'           => 'Архив',
-            'type_id'        => 3,
+            'type_id'        => 5,
             'path'           => 'public/result',
-            'user_id'        => 5,
+            'user_id'        => 1,
         ]);
 
 
@@ -1326,9 +1475,9 @@ class DatabaseSeeder extends Seeder
         // ]);
         File::Create([
             'name'    => 'Архив',
-            'type_id' => 3,
+            'type_id' => 5,
             'path'    => 'public/result',
-            'user_id' => 5,
+            'user_id' => 1,
         ]);
 
 
@@ -1472,11 +1621,13 @@ class DatabaseSeeder extends Seeder
             'name'    => 'Превью KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS',
             'type_id' => 2,
             'path'    => 'public/00000000000000000000000000000001.png',
+            'user_id' => 1
         ]);
         File::Create([
             'name'    => 'Папка KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS',
             'type_id' => 5,
             'path'    => 'files/00000000000000000000000000000001',
+            'user_id' => 1
         ]);
         $json    = json_decode(Storage::get('files/00000000000000000000000000000001/KV3_07790_06176_01_KANOPUS_20190629_043737_043849.SCN13.MS.L2.GBD.json'));
         $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)->getFeatures()[0]->getGeometry()->jsonSerialize());

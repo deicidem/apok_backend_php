@@ -15,6 +15,9 @@ class GroupUser extends Model
     public function group() {
         return $this->belongsTo(Group::class);
     }
+    protected $primaryKey = null;
+    public $incrementing = false;
+    public $timestamps = false;
     protected $table = 'group_user';
     protected $fillable = [
         'user_id',

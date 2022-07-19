@@ -7,6 +7,7 @@ use App\Http\Services\GroupService;
 use Illuminate\Http\Request;
 use App\Http\Requests\GroupStoreRequest;
 use App\Http\Resources\GroupCollection;
+use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupTypeResource;
 use App\Http\Services\Dto\GroupDto;
 use App\Models\GroupType;
@@ -32,15 +33,7 @@ class GroupController extends Controller
 
     public function index(Request $request)
     {
-        $groups = null;
-        if ($request->has('userId')) {
-            $groups = $this->service->getAllByUser($request->userId);
-        } else if ($request->has('ownerId')) {
-            $groups = $this->service->getAllByOwner($request->ownerId);
-        } else {
-            $groups = $this->service->getAll();
-        }
-
+        $groups = $this->service->getAll($request->search, $request->userId, $request->ownerId);
 
         return new GroupCollection($groups);
     }
@@ -82,9 +75,7 @@ class GroupController extends Controller
             ], 404);
         }
 
-        return response()->json([
-            'group' => $group
-        ], 200);
+        return new GroupResource($group);
     }
 
     /**

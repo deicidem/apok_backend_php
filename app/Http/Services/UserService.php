@@ -15,25 +15,24 @@ use Illuminate\Support\Facades\Storage;
 use InvalidArgumentException;
 class UserService
 {
-  public function getAll()
+  public function getAll($search, $groupId)
   {  
-    return User::orderBy('id')->paginate(10);
-  }
+    $query = User::query();
 
-  public function getBySearch($search)
-  {
-    
-    return User::where('first_name', 'ilike', '%'.$search.'%')
-      ->orWhere('last_name', 'ilike', '%'.$search.'%')
-      ->orWhere('email', 'ilike', '%'.$search.'%')
-      ->orWhere('id', 'ilike', '%'.$search.'%')
-      ->orWhere('created_at', 'ilike', '%'.$search.'%')
-      ->orderBy('id')->paginate(10);
+    if ($groupId != null) {
+      $query = Group::Find($groupId)->users()->getQuery();
+    }  
 
-  }
-  public function getAllByGroup($groupId)
-  {
-    return Group::Find($groupId)->users()->paginate(10);
+    $query->when($search != null, function($q) use ($search) {
+      return $q->where(function ($query) use ($search) {
+        return $query->where('first_name', 'ilike', '%'.$search.'%')
+          ->orWhere('last_name', 'ilike', '%'.$search.'%')
+          ->orWhere('email', 'ilike', '%'.$search.'%')
+          ->orWhere('id', 'ilike', '%'.$search.'%')
+          ->orWhere('created_at', 'ilike', '%'.$search.'%');
+      });
+    });
+    return $query->orderBy('id')->paginate(15);
   }
   public function getOne($id)
   {
