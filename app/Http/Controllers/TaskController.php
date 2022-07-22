@@ -32,7 +32,7 @@ class TaskController extends Controller
 
     public function index(Request $request)
     {
-        $tasks = $this->service->getAll($request->search, $request->userId); 
+        $tasks = $this->service->getAll($request->all()); 
 
         return new TaskCollection($tasks);
     }

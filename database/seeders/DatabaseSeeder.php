@@ -55,42 +55,56 @@ class DatabaseSeeder extends Seeder
             'first_name' => 'Андрей',
             'last_name'  => 'Почитаев',
             'email'      => 'test@example.com',
+            'organisation' => 'Центр иновационных технологий',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 1
         ]);
         User::factory()->create([
             'first_name' => 'Анна',
             'last_name'  => 'Афанасьева',
             'email'      => 'test1@example.ru',
+            'organisation' => 'Центр иновационных технологий',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 2
         ]);
         User::factory()->create([
             'first_name' => 'Анастасия',
             'last_name'  => 'Живых',
             'email'      => 'test2@example.ru',
+            'organisation' => 'Центр иновационных технологий',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 2
         ]);
         User::factory()->create([
             'first_name' => 'Лобзенев',
             'last_name'  => 'Вячеслав', 
             'email'      => 'test3@example.ru',
+            'organisation' => 'Центр иновационных технологий',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 2
         ]);
         User::factory()->create([
             'first_name' => 'Игорь',
             'last_name'  => 'Долгих',
             'email'      => 'test4@example.ru',
+            'organisation' => 'Центр иновационных технологий',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 2
         ]);
         User::factory()->create([
             'first_name' => 'Иван',
             'last_name'  => 'Иванов',
             'email'      => 'test5@example.ru',
+            'organisation' => 'НИИ КС',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 2
         ]);
         User::factory()->create([
             'first_name' => 'Петр',
             'last_name'  => 'Петров',
             'email'      => 'test6@example.ru',
+            'organisation' => 'НИИ КС',
+            'phone_number' => '+7 (999) 999 99-99',
             'role_id'    => 2
         ]);
         User::factory(200)->create();
@@ -1320,7 +1334,16 @@ class DatabaseSeeder extends Seeder
             'title'     => 'Оценка координатно-измерительных характеристик',
             'plan_id'   => 1,
             'status_id' => 3,
-            'user_id'   => 1
+            'user_id'   => 1,
+            'note' => '<p>В ходе выполнения данной задачи происходит поиск изменений, произошедших с растительностью: полями, лесами, кустарниками и т.д. </p>
+
+            //         <p>В качестве исходных данных для данной задачи используются разновременные снимки, имеющие область пересечения, и последовательность цветовых каналов которых соответствует RGB.</p>
+    
+            //         <p>Суть данного алгоритма заключается в том, что на двух снимках сначала определяются области растительности, а затем происходит их сравнение.</p>
+    
+            //         <p>
+            //         Результатом выполнения данной задачи является векторный слой изменений растительности, самой растительности и отчетная форма со статистической информацией.
+            //         </p>'
         ]);
         Task::Create([
             'title'     => 'Оценка пространственно-частотных характеристик (оптика)',
@@ -1334,7 +1357,7 @@ class DatabaseSeeder extends Seeder
             'title'     => 'Мониторинг состояния посевов',
             'plan_id'   => 1,
             'status_id' => 3,
-            'user_id'   => 1
+            'user_id'   => 1,
         ]);
         Task::Create([
             'title'     => 'Мониторинг содержания азота в сельскохозяйственных растениях',

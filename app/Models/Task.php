@@ -33,6 +33,7 @@ class Task extends Model
         'title',
         'status_id',
         'plan_id',
-        'user_id'
+        'user_id',
+        'note'
     ];
 }

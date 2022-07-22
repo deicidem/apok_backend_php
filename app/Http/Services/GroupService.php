@@ -17,27 +17,66 @@ use InvalidArgumentException;
 
 class GroupService
 {
-  public function getAll($search, $userId, $ownerId )
+  public function getAll($input)
   {
     $query = Group::query();
 
-    if ($userId != null) {
-      $query = User::Find($userId)->groups()->getQuery();
+    if (isset($input['userId'])) {
+      $query = User::Find($input['userId'])->groups()->getQuery();
     } 
 
-    $query->when($ownerId != null, function($q) use ($ownerId) {
-      return $q->where('owner_id', $ownerId);
+    $query->when(isset($input['ownerId']), function($q) use ($input) {
+      return $q->where('owner_id', $input['ownerId']);
     });
 
-    $query->when($search != null, function($q) use ($search) {
-      return $q->where(function ($query) use ($search) {
-        return $query->where('title', 'ilike', '%'.$search.'%')
-          ->orWhere('id', 'ilike', '%'.$search.'%')
-          ->orWhere('created_at', 'ilike', '%'.$search.'%');
+    $query->when(isset($input['title']), function ($q) use ($input) {
+      return $q->where('title', 'ilike', '%' . $input['title'] . '%');
+    });
+    $query->when(isset($input['id']), function ($q) use ($input) {
+      return $q->where('id', 'ilike', '%' . $input['id'] . '%');
+    });
+    $query->when(isset($input['date']), function ($q) use ($input) {
+      return $q->where('created_at', '>=', $input['date']);
+    });
+    $query->when(isset($input['any']), function($q) use ($input) {
+      return $q->where(function ($query) use ($input) {
+        return $query->where('title', 'ilike', '%'.$input['any'].'%')
+          ->orWhere('id', 'ilike', '%'.$input['any'].'%')
+          ->orWhere('created_at', 'ilike', '%'.$input['any'].'%');
       });
+  });
+
+
+    $query->when(isset($input['sortBy']), function ($q) use ($input) {
+      $descending = false;
+      if (isset($input['desc'])) {
+        $descending = filter_var($input['desc'], FILTER_VALIDATE_BOOLEAN);  
+      }
+
+      $sortBy = $input['sortBy'];
+      if ($sortBy == 'title') {
+        return $q->orderBy('title', $descending ? 'desc' : 'asc');
+      }  else if ($sortBy == 'date') {
+        return $q->orderBy('created_at', $descending ? 'desc' : 'asc');
+      }  else {
+        return $q->orderBy('id', $descending ? 'desc' : 'asc');
+      }
+    }, function ($q) {
+      return $q->orderBy('id');
     });
 
-    return $query->orderBy('id')->paginate(15);
+    $paginationSize = 15;
+    if (isset($input['size'])) {
+      if ($input['size'] > 50) {
+        $paginationSize = 50;
+      } else if ($input['size'] < 1) {
+        $paginationSize = 1;
+      } else {
+        $paginationSize = $input['size'];
+      }
+    }
+
+    return  $query->paginate($paginationSize);
   }
 
 
@@ -50,10 +89,13 @@ class GroupService
     return $group;
   }
 
-  public function delete($id)
+  public function delete($id, $userId)
   {
     $group = Group::find($id);
     if (!$group) {
+      return null;
+    }
+    if ($group->owner_id != $userId) {
       return null;
     }
     $group->delete();
@@ -65,15 +107,19 @@ class GroupService
     return true;
   } 
 
-  public function create(GroupDto $dto)
+  public function create($input)
   {
     $group = Group::create([
-      'title'    => $dto->title,
-      'type_id'  => $dto->type,
-      'owner_id' => $dto->ownerId,
+      'title'    => $input['title'],
+      'type_id'  => $input['type'],
+      'owner_id' => $input['ownerId'],
+    ]);
+    GroupUser::create([
+      'group_id' => $group->id,
+      'user_id'  => $input['ownerId'],
     ]);
     UserLog::create([
-      'user_id' => $dto->ownerId,
+      'user_id' => $input['ownerId'],
       'message' => 'Создал группу '.$group->id,
       'type' => 'store'
     ]);

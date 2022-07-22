@@ -15,9 +15,9 @@ class UserLogsResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'date' => $this->created_at,
+            'date'    => $this->created_at,
             'message' => $this->message,
-            'type' => $this->type
+            'type'    => $this->type
         ];
     }
 }

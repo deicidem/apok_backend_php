@@ -107,6 +107,7 @@ Route::group(['middleware' => ['auth:sanctum', 'not-blocked']], function () {
 
   Route::get('user/groups', [UserController::class, 'getGroups']);
   Route::get('user/groups/{group}', [UserController::class, 'getGroup']);
+  Route::get('user/groups/{group}/users', [UserController::class, 'getUsersByGroup']);
   Route::post('user/groups', [UserController::class, 'createGroup']);
   Route::delete('user/groups', [UserController::class, 'deleteGroups']);
   Route::delete('user/groups/{group}', [UserController::class, 'deleteGroup']);

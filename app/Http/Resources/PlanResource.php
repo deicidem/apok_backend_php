@@ -16,13 +16,13 @@ class PlanResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'    => $this->id,
-            'title' => $this->title,
-            'excerpt' => $this->excerpt,
+            'id'           => $this->id,
+            'title'        => $this->title,
+            'excerpt'      => $this->excerpt,
             'description'  => $this->description,
-            'data' => PlanDataResource::collection($this->data),
+            'data'         => PlanDataResource::collection($this->data),
             'requirements' => PlanRequirementResource::collection($this->requirements),
-            'previewPath' => '/public'.Storage::url($this->preview->path)
+            'previewPath'  => '/public'.Storage::url($this->preview->path)
         ];
     }
 }

@@ -12,47 +12,57 @@ use InvalidArgumentException;
 
 class DzzService
 {
-    public function get(SearchDto $searchDto)
+    public function get($input)
     {
-        $json    = json_decode($searchDto->polygon, true);
+        $json    = json_decode($input['polygon'], true);
         $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)
             ->getGeometry()->jsonSerialize());
 
-        $placeholders = implode(",", array_fill(0, count($searchDto->months), '?'));
+        $placeholders = implode(",", array_fill(0, count($input['months']), '?'));
 
-        return Dzz::whereBetween('date', [$searchDto->startDate, $searchDto->endDate])
-            ->whereBetween('cloudiness', [$searchDto->startCloudiness, $searchDto->endCloudiness])
-            ->whereIn('satelite_id', $searchDto->satelites)
-            ->whereRaw("EXTRACT(MONTH FROM date) IN ($placeholders)", $searchDto->months)
+        $query = Dzz::query();
+
+        $query->whereBetween('date', [$input['startDate'], $input['endDate']])
+            ->whereBetween('cloudiness', [$input['startCloudiness'], $input['endCloudiness']])
+            ->whereIn('satelite_id', $input['satelites'])
+            ->whereRaw("EXTRACT(MONTH FROM date) IN ($placeholders)", $input['months'])
             ->whereRaw("ST_Intersects(geography, ST_GeomFromGeoJSON(?))", $polygon)
-            ->selectRaw("*, ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography")
-            ->paginate(2);
+            ->selectRaw("*, ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography");
 
-        // print_r($dzzs[0]->processingLevel);
-        // $data = [];
 
-        // foreach ($dzzs as $dzz) {
+        $query->when(isset($input['sortBy']), function ($q) use ($input) {
+            $descending = false;
+            if (isset($input['desc'])) {
+                $descending = filter_var($input['desc'], FILTER_VALIDATE_BOOLEAN);
+            }
 
-        //         $geography = Dzz::selectRaw('ST_AsGeoJSON(ST_SimplifyPreserveTopology(geography::geometry, 1), 5, 1) as geography, id')->whereRaw('id = ? and ST_Intersects(geography, ST_GeomFromGeoJSON(?))', [$dzz->id, $polygon])->get();
+            $sortBy = $input['sortBy'];
+            if ($sortBy == 'name') {
+                return $q->orderBy('name', $descending ? 'desc' : 'asc');
+            } else if ($sortBy == 'date') {
+                return $q->orderBy('date', $descending ? 'desc' : 'asc');
+            }else if ($sortBy == 'cloudiness') {
+                return $q->orderBy('cloudiness', $descending ? 'desc' : 'asc');
+            }else if ($sortBy == 'satelite_id') {
+                return $q->orderBy('satelite', $descending ? 'desc' : 'asc');
+            } else {
+                return $q->orderBy('id', $descending ? 'desc' : 'asc');
+            }
+        }, function ($q) {
+            return $q->orderBy('id');
+        });
 
-        //         if (count($geography) != 0) {
-        //             $previewPath = Storage::url($dzz->preview->path);
-        //             $dto = new DzzDto([
-        //                 'id'              => $dzz->id,
-        //                 "name"            => $dzz->name,
-        //                 "date"            => $dzz->date,
-        //                 "round"           => $dzz->round,
-        //                 "route"           => $dzz->route,
-        //                 "cloudiness"      => $dzz->cloudiness,
-        //                 "processingLevel" => $dzz->processingLevel->name,
-        //                 "satelite"        => $dzz->satelite->name,
-        //                 "previewPath"     => '/public'.$previewPath,
-        //                 "geography"       => json_decode($geography[0]->geography)
-        //             ]);
-        //             array_push($data, $dto);
-        //         }
-        // }
+        $paginationSize = 2;
+        if (isset($input['size'])) {
+            if ($input['size'] > 50) {
+                $paginationSize = 50;
+            } else if ($input['size'] < 1) {
+                $paginationSize = 1;
+            } else {
+                $paginationSize = $input['size'];
+            }
+        }
 
-        //  $dzzs;
+        return $query->paginate($paginationSize);;
     }
 }

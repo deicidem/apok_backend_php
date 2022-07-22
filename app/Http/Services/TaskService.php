@@ -19,23 +19,64 @@ use InvalidArgumentException;
 
 class TaskService
 {
-  public function getAll($search, $userId)
+  public function getAll($input)
   {
     $query = Task::query();
 
-    $query->when($userId != null, function ($q) use ($userId) {
-      return $q->where('user_id', $userId);
+    $query->when(isset($input['userId']), function ($q) use ($input) {
+      return $q->where('user_id', $input['userId']);
     });
 
-    $query->when($search != null, function ($q) use ($search) {
-      return $q->where(function ($query) use ($search) {
-        return $query->where('title', 'ilike', '%'.$search.'%')
-          ->orWhere('id', 'ilike', '%'.$search.'%')
-          ->orWhere('created_at', 'ilike', '%'.$search.'%');
+
+    $query->when(isset($input['title']), function ($q) use ($input) {
+      return $q->where('title', 'ilike', '%' . $input['title'] . '%');
+    });
+    $query->when(isset($input['id']), function ($q) use ($input) {
+      return $q->where('id', 'ilike', '%' . $input['id'] . '%');
+    });
+    $query->when(isset($input['date']), function ($q) use ($input) {
+      return $q->where('created_at', '>=', $input['date']);
+    });
+    $query->when(isset($input['any']), function ($q) use ($input) {
+      return $q->where(function ($query) use ($input) {
+        return $query->where('title', 'ilike', '%' . $input['any'] . '%')
+          ->orWhere('id', 'ilike', '%' . $input['any'] . '%')
+          ->orWhere('created_at', 'ilike', '%' . $input['any'] . '%');
       });
     });
 
-    return  $query->orderBy('id')->paginate(15);
+
+    $query->when(isset($input['sortBy']), function ($q) use ($input) {
+      $descending = false;
+      if (isset($input['desc'])) {
+        $descending = filter_var($input['desc'], FILTER_VALIDATE_BOOLEAN);  
+      }
+
+      $sortBy = $input['sortBy'];
+      if ($sortBy == 'title') {
+        return $q->orderBy('title', $descending ? 'desc' : 'asc');
+      } else if ($sortBy == 'date') {
+        return $q->orderBy('created_at', $descending ? 'desc' : 'asc');
+      } else {
+        return $q->orderBy('id', $descending ? 'desc' : 'asc');
+      }
+    }, function ($q) {
+      return $q->orderBy('id');
+    });
+
+
+    $paginationSize = 5;
+    if (isset($input['size'])) {
+      if ($input['size'] > 50) {
+        $paginationSize = 50;
+      } else if ($input['size'] < 1) {
+        $paginationSize = 1;
+      } else {
+        $paginationSize = $input['size'];
+      }
+    }
+
+    return  $query->paginate($paginationSize);
   }
 
   public function getOne($id)
@@ -110,66 +151,66 @@ class TaskService
 
 
 
-  public function post(TaskInputDto $dto, $userId)
-  {
+  public function post($input){
     $task = Task::Create([
-      'title'     => Plan::Find($dto->planId)->title,
+      'title'     => Plan::Find($input['planId'])->title,
       'status_id' => 1,
-      'plan_id'   => $dto->planId,
-      'user_id'   => $userId
+      'plan_id'   => $input['planId'],
+      'user_id'   => $input['userId'],
+      'note' => $input['note']
     ]);
 
     UserLog::create([
-      'user_id' => $userId,
+      'user_id' => $input['userId'],
       'message' => 'Запланировал задачу '.$task->id,
       'type' => 'store'
     ]);
     
     $taskId = $task->id;
 
-    if ($dto->params != null) {
-      foreach ($dto->params as $key => $param) {
+    if ($input['params'] != null) {
+      foreach ($input['params'] as $key => $param) {
         TaskData::Create([
           'task_id'      => $taskId,
           'type_id'      => 4,
-          'title'        => PlanData::Find($dto->links->params[$key])->title,
+          'title'        => PlanData::Find($input['links']->params[$key])->title,
           'text'         => $param,
-          'plan_data_id' => $dto->links->params[$key]
+          'plan_data_id' => $input['links']->params[$key]
         ]);
         UserLog::create([
-          'user_id' => $userId,
+          'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
           'type' => 'store'
         ]);
       }
     }
 
-    if ($dto->dzzs != null) {
-      foreach ($dto->dzzs as $key => $dzzId) {
+    if ($input['dzzs'] != null) {
+      foreach ($input['dzzs'] as $key => $dzzId) {
         $file = Dzz::Find($dzzId)->directory;
 
         TaskData::Create([
           'task_id'      => $taskId,
           'type_id'      => 2,
-          'title'        => PlanData::Find($dto->links->dzzs[$key])->title,
+          'title'        => PlanData::Find($input['links']->dzzs[$key])->title,
           'file_id'      => $file->id,
-          'plan_data_id' => $dto->links->dzzs[$key]
+          'plan_data_id' => $input['links']->dzzs[$key]
         ]);
         UserLog::create([
-          'user_id' => $userId,
+          'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
           'type' => 'store'
         ]);
       }
     }
 
-    if ($dto->files != null) {
-      foreach ($dto->files as $key => $file) {
+    if ($input['files'] != null) {
+      foreach ($input['files'] as $key => $file) {
         $dzz =  Dzz::Create([
           'name' => 'user dzz',
         ]);
         UserLog::create([
-          'user_id' => $userId,
+          'user_id' => $input['userId'],
           'message' => 'Добавил снимок '.$dzz->id,
           'type' => 'store'
         ]);
@@ -194,7 +235,7 @@ class TaskService
             'name'    => $name,
             'path'    => $directory,
             'type_id' => 3,
-            'user_id' => $userId
+            'user_id' => $input['userId']
           ]);
           
         } else {
@@ -202,26 +243,26 @@ class TaskService
             'name'    => $name,
             'path'    => $path,
             'type_id' => 2,
-            'user_id' => $userId
+            'user_id' => $input['userId']
           ]);
         }
 
         $dzz->directory_id = $newFile->id;
         $dzz->save();
         UserLog::create([
-          'user_id' => $userId,
+          'user_id' => $input['userId'],
           'message' => 'Добавил файл '.$newFile->id,
           'type' => 'store'
         ]);
         TaskData::Create([
           'task_id'      => $taskId,
           'type_id'      => 2,
-          'title'        => PlanData::Find($dto->links->files[$key])->title,
+          'title'        => PlanData::Find($input['links']->files[$key])->title,
           'file_id'      => $newFile->id,
-          'plan_data_id' => $dto->links->files[$key]
+          'plan_data_id' => $input['links']->files[$key]
         ]);
         UserLog::create([
-          'user_id' => $userId,
+          'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
           'type' => 'store'
         ]);
@@ -230,8 +271,8 @@ class TaskService
 
 
 
-    if ($dto->vectors != null) {
-      foreach ($dto->vectors as $key => $vector) {
+    if ($input['vectors'] != null) {
+      foreach ($input['vectors'] as $key => $vector) {
         $json    = json_decode($vector, true);
         $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)
           ->getGeometry()->jsonSerialize());
@@ -239,12 +280,12 @@ class TaskService
         TaskData::Create([
           'task_id'      => $taskId,
           'type_id'      => 3,
-          'title'        => PlanData::Find($dto->links->vectors[$key])->title,
+          'title'        => PlanData::Find($input['links']->vectors[$key])->title,
           'geography'    => DB::raw("ST_GeomFromGeoJSON('$polygon')"),
-          'plan_data_id' => $dto->links->vectors[$key]
+          'plan_data_id' => $input['links']->vectors[$key]
         ]);
         UserLog::create([
-          'user_id' => $userId,
+          'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
           'type' => 'store'
         ]);

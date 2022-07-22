@@ -11,6 +11,7 @@ use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupTypeResource;
 use App\Http\Services\Dto\GroupDto;
 use App\Models\GroupType;
+use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
@@ -33,7 +34,7 @@ class GroupController extends Controller
 
     public function index(Request $request)
     {
-        $groups = $this->service->getAll($request->search, $request->userId, $request->ownerId);
+        $groups = $this->service->getAll($request->all());
 
         return new GroupCollection($groups);
     }
@@ -46,11 +47,11 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        $dto = new GroupDto([
+        $dto = [
             'title'   => $request['title'],
             'type'    => $request['type'],
-            'ownerId' => $request['ownerId']
-        ]);
+            'ownerId' => Auth::id()
+        ];
 
         $group = $this->service->create($dto);
 
@@ -86,7 +87,6 @@ class GroupController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-
     /**
      * Remove the specified resource from storage.
      *
@@ -95,7 +95,7 @@ class GroupController extends Controller
      */
     public function destroy($id)
     {
-        $res = $this->service->delete($id);
+        $res = $this->service->delete($id, Auth::id());
 
         if ($res == null) {
             return response()->json([

@@ -15,10 +15,10 @@ class PlanDataResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id' => $this->id,
-            'title'  => $this->title,
+            'id'          => $this->id,
+            'title'       => $this->title,
             'description' => $this->description,
-            'type' => $this->type_id   
+            'type'        => $this->type_id
         ];
     }
 }

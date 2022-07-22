@@ -16,19 +16,20 @@ class TaskResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'        => $this->id,
-            'title'     => $this->title,
-            'date'      => $this->created_at,
-            'status'    => $this->taskStatus->name,
-            'result'    => $this->result == null ? null : [
+            'id'     => $this->id,
+            'title'  => $this->title,
+            'date'   => $this->created_at,
+            'note'   => $this->note,
+            'status' => $this->taskStatus->name,
+            'result' => $this->result == null ? null : [
                 $this->mergeWhen($this->result != null, [
                     'views' => TaskResultViewResource::collection($this->result->views),
                     'files' => TaskResultFileResource::collection($this->result->files)
                 ]),
             ],
-            'deletable' => $this->isTaskDeletable($this->id),
+            'deletable' => $this->isTaskDeletable($this->status_id),
             'updatedAt' => $this->updated_at,
-            'user' => new UserResource($this->user)
+            'user'      => new UserResource($this->user)
         ];
     }
     private function isTaskDeletable($status_id) {    

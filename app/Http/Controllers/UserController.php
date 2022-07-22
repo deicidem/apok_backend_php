@@ -58,7 +58,7 @@ class UserController extends Controller
         // } else {
         //     $users = $this->userService->getAll();
         // }
-        $users = $this->userService->getAll($request->search, $request->groupId);
+        $users = $this->userService->getAll($request->all());
         return new UserCollection($users);
 
     }
@@ -183,7 +183,9 @@ class UserController extends Controller
 
     public function getTasks(Request $request)
     {
-        $tasks = $this->taskService->getAll($request->search, Auth::id());
+        $input = $request->all();
+        $input['userId'] = Auth::id();
+        $tasks = $this->taskService->getAll($input);
         return new TaskCollection($tasks);
     }
     public function getTask($id)
@@ -207,16 +209,19 @@ class UserController extends Controller
     public function createTask(Request $request)
     {
         try {
-            $dto = new TaskInputDto([
+            print_r($request->all());
+            $input = [
                 'dzzs'    => $request['dzzs'],
                 'planId'  => $request['planId'],
                 'vectors' => $request['vectors'],
                 'files'   => $request['files'],
                 'params'  => $request['params'],
+                'note'    => $request['note'],
                 'links'   => json_decode($request['links']),
-            ]);
+                'userId' => Auth::id()
+            ];
 
-            $this->taskService->post($dto, Auth::id());
+            $this->taskService->post($input);
 
             return response()->json([
                 'message' => "Task created"
@@ -279,7 +284,9 @@ class UserController extends Controller
 
     public function getFiles(Request $request) {
     
-        $files = $this->fileService->getAll($request->search, Auth::id());
+        $input = $request->all();
+        $input['userId'] = Auth::id();
+        $files = $this->fileService->getAll($input);
 
         return new FileCollection($files);
     }
@@ -304,24 +311,20 @@ class UserController extends Controller
         $deletable = [];
 
         foreach ($request['ids'] as $id) {
-            $res = $this->fileService->isFileDeletable($id);
             array_push($deletable, [
                 'id' => $id,
-                'delete' => $res
             ]);
         }
 
         
 
         foreach ($deletable as $file) {
-            if ($file['delete']) {
-                $res = $this->fileService->deleteUserFile($file['id']);
-                if ($res == null) {
-                    return response()->json([
-                        'message' => 'File  not found'
-                    ], 404);
-                }
-            }            
+            $res = $this->fileService->deleteUserFile($file['id']);
+            if ($res == null) {
+                return response()->json([
+                    'message' => 'File  not found'
+                ], 404);
+            }
         }
 
         return response()->json([
@@ -331,11 +334,14 @@ class UserController extends Controller
     
     public function getGroups(Request $request)
     {
+        $input = $request->all();
         $groups = null;
         if ($request->owner) {
-            $groups = $this->groupService->getAll($request->search, null, Auth::id());
+            $input['ownerId'] = Auth::id();
+            $groups = $this->groupService->getAll($input);
         } else {
-            $groups = $this->groupService->getAll($request->search, Auth::id(), null);
+            $input['userId'] = Auth::id();
+            $groups = $this->groupService->getAll($input);
         }
         return new GroupCollection($groups);
     }
@@ -351,6 +357,13 @@ class UserController extends Controller
 
         return new GroupResource($group);
     }
+    public function getUsersByGroup($groupId, Request $request)
+    {
+        $input = $request->all();
+        $input['groupId'] = $groupId;
+        $users = $this->userService->getAll($input);
+        return new UserCollection($users);
+    }
     /**
      * Store a newly created resource in storage.
      *
@@ -360,13 +373,13 @@ class UserController extends Controller
     public function createGroup(Request $request)
     {
         try {
-            $dto = new GroupDto([
+            $dto = [
                 'title'   => $request['title'],
                 'type'    => $request['type'],
                 'ownerId' => Auth::id()
-            ]);
+            ];
 
-            $this->groupService->createGroup($dto);
+            $this->groupService->create($dto);
 
             return response()->json([
                 'message' => "Group created"
@@ -383,21 +396,17 @@ class UserController extends Controller
         $deletable = [];
 
         foreach ($request['ids'] as $id) {
-            $res = $this->groupService->isGroupDeletable($id);
             array_push($deletable, [
                 'id' => $id,
-                'delete' => $res
             ]);
         }
 
         foreach ($deletable as $group) {
-            if ($group['delete']) {
-                $res = $this->groupService->deleteUserGroup($group['id']);
-                if ($res == null) {
-                    return response()->json([
-                        'message' => 'Group  not found'
-                    ], 404);
-                }
+            $res = $this->groupService->delete($group['id'], Auth::id());
+            if ($res == null) {
+                return response()->json([
+                    'message' => 'Group  not found'
+                ], 404);
             }
         }
 
@@ -413,7 +422,7 @@ class UserController extends Controller
      */
     public function deleteGroup($id)
     {
-        $res = $this->service->delete($id);
+        $res = $this->groupService->delete($id, Auth::id());
 
         if ($res == null) {
             return response()->json([

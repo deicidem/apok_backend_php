@@ -28,10 +28,7 @@ class DzzController extends Controller
 
     public function index(Request $request)
     {
-        $params = $request->all();
-
-        $searchDto = new SearchDto($params);
-        $dzzs      = $this->dzzService->get($searchDto);
+        $dzzs      = $this->dzzService->get($request->all());
 
         return new DzzCollection($dzzs);
     }

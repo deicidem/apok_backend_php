@@ -27,11 +27,9 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
-        $files = $this->service->getAll($request->search, $request->userId);
+        $files = $this->service->getAll($request->all());
         return new FileCollection($files);
     }
-
-    
 
     /**
      * Store a newly created resource in storage.
