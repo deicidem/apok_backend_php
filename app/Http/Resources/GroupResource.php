@@ -18,9 +18,11 @@ class GroupResource extends JsonResource
         return [
             'id'    => $this->id,
             'title' => $this->title,
+            'description' => $this->description,
             'type'  => $this->type->title,
+            'typeId'  => $this->type_id,
             'owner' => new UserResource($this->owner),
-            'deletable' => $this->owner_id == Auth::id()
+            'isOwner' => $this->owner_id == Auth::id()
           ];
     }
 }

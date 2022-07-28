@@ -21,7 +21,11 @@ class UserService
     $query = User::query();
 
     if (isset($input['groupId'])) {
-      $query = Group::Find($input['groupId'])->users()->getQuery();
+      if (isset($input['requests']) && filter_var($input['requests'], FILTER_VALIDATE_BOOLEAN)) {
+        $query = Group::Find($input['groupId'])->users()->whereNull('verified')->getQuery();
+      }else {
+        $query = Group::Find($input['groupId'])->users()->whereNotNull('verified')->getQuery();
+      }
     }
 
 
@@ -66,10 +70,10 @@ class UserService
       } else if ($sortBy == 'email') {
         return $q->orderBy('email', $descending ? 'DESC' : 'ASC');
       } else {
-        return $q->orderBy('id', $descending ? 'DESC' : 'ASC');
+        return $q->orderBy('users.id', $descending ? 'DESC' : 'ASC');
       }
     }, function ($q) {
-      return $q->orderBy('id');
+      return $q->orderBy('users.id');
     });
 
     $paginationSize = 15;
@@ -83,7 +87,7 @@ class UserService
       }
     }
 
-    return  $query->paginate($paginationSize);
+    return  $query->selectRaw("*, users.id as id")->paginate($paginationSize);
   }
   public function getOne($id)
   {

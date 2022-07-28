@@ -35,15 +35,21 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
                 'max:255',
                 Rule::unique('users')->ignore($user->id),
             ],
+            'organisation' => ['required', 'string', 'max:255'],
+            'phoneNumber' => ['required', 'string', 'max:255'],
         ])->validateWithBag('updateProfileInformation');
 
-        if ($input['email'] !== $user->email &&
-            $user instanceof MustVerifyEmail) {
+        if (
+            $input['email'] !== $user->email &&
+            $user instanceof MustVerifyEmail
+        ) {
             $this->updateVerifiedUser($user, $input);
         } else {
             $user->forceFill([
                 'first_name' => $input['firstName'],
                 'last_name' => $input['lastName'],
+                'organisation' => $input['organisation'],
+                'phone_number' => $input['phoneNumber'],
                 'email' => $input['email'],
             ])->save();
         }
@@ -51,7 +57,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
             'user_id' => $user->id,
             'message' => 'Изменил личную информацию',
             'type' => 'change'
-          ]);
+        ]);
     }
 
     /**
@@ -66,6 +72,8 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
         $user->forceFill([
             'first_name' => $input['firstName'],
             'last_name' => $input['lastName'],
+            'organisation' => $input['organisation'],
+            'phone_number' => $input['phoneNumber'],
             'email' => $input['email'],
             'email_verified_at' => null,
         ])->save();

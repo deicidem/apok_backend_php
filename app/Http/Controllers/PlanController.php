@@ -10,8 +10,11 @@ use App\Http\Resources\PlanCollection;
 use App\Http\Resources\PlanResource;
 use App\Http\Services\Dto\PlanDto;
 use App\Mail\EmailVerification;
+
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\URL;
 
 class PlanController extends Controller
 {

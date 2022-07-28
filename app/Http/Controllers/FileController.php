@@ -104,7 +104,7 @@ class FileController extends Controller
             // $this->service->post($dto);
 
             return response()->json([
-                'message' => "File created"
+                'message' => "Файл создан"
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
@@ -125,7 +125,7 @@ class FileController extends Controller
 
         if ($file == null) {
             return response()->json([
-                'message' => 'File Not Found.'
+                'message' => 'Файл не найден.'
             ], 404);
         }
 
@@ -159,16 +159,16 @@ class FileController extends Controller
 
             if ($res == null) {
                 return response()->json([
-                    'message' => 'File not found'
+                    'message' => 'Файл не нейден'
                 ], 404);
             }
 
             return response()->json([
-                'message' => "File successfully updated"
+                'message' => "Файл успешно обновлен"
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
-                'message' => "Something went wrong"
+                'message' => "Что-то пошло не так"
             ], 500);
         }
     }
@@ -185,12 +185,12 @@ class FileController extends Controller
 
         if ($res == null) {
             return response()->json([
-                'message' => 'File not found'
+                'message' => 'Файл не найден'
             ], 404);
         }
 
         return response()->json([
-            'message' => "File successfully deleted"
+            'message' => "Файл успешно удален"
         ], 200);
     }
 

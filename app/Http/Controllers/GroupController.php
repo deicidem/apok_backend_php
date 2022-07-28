@@ -47,13 +47,9 @@ class GroupController extends Controller
      */
     public function store(Request $request)
     {
-        $dto = [
-            'title'   => $request['title'],
-            'type'    => $request['type'],
-            'ownerId' => Auth::id()
-        ];
-
-        $group = $this->service->create($dto);
+        $input = $request->all();
+        $input['ownerId'] = Auth::id();
+        $group = $this->groupService->create($input);
 
         return response()->json([
             'group' => $group

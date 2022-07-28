@@ -49,7 +49,7 @@ class TaskService
     $query->when(isset($input['sortBy']), function ($q) use ($input) {
       $descending = false;
       if (isset($input['desc'])) {
-        $descending = filter_var($input['desc'], FILTER_VALIDATE_BOOLEAN);  
+        $descending = filter_var($input['desc'], FILTER_VALIDATE_BOOLEAN);
       }
 
       $sortBy = $input['sortBy'];
@@ -104,17 +104,14 @@ class TaskService
     return $task;
   }
 
-  public function update(TaskOutputDto $dto)
+  public function update($id, $input)
   {
 
-    $task = Task::find($dto->id);
+    $task = Task::find($id);
     if (!$task) {
       return null;
     }
-    $task->title     = $dto->title;
-    $task->status_id = $dto->statusId;
-    $task->dzz_id    = $dto->dzzId;
-    $task->result    = $dto->result;
+    $task->note = $input['note'];
     $task->save();
 
     return true;
@@ -144,7 +141,7 @@ class TaskService
     UserLog::create([
       'user_id' => Auth::id(),
       'message' => 'Удалил задачу '.$task->id,
-      'type' => 'delete'
+      'type'    => 'delete'
     ]);
     return true;
   }
@@ -157,13 +154,13 @@ class TaskService
       'status_id' => 1,
       'plan_id'   => $input['planId'],
       'user_id'   => $input['userId'],
-      'note' => $input['note']
+      'note'      => $input['note']
     ]);
 
     UserLog::create([
       'user_id' => $input['userId'],
       'message' => 'Запланировал задачу '.$task->id,
-      'type' => 'store'
+      'type'    => 'store'
     ]);
     
     $taskId = $task->id;
@@ -180,7 +177,7 @@ class TaskService
         UserLog::create([
           'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
-          'type' => 'store'
+          'type'    => 'store'
         ]);
       }
     }
@@ -199,7 +196,7 @@ class TaskService
         UserLog::create([
           'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
-          'type' => 'store'
+          'type'    => 'store'
         ]);
       }
     }
@@ -212,11 +209,11 @@ class TaskService
         UserLog::create([
           'user_id' => $input['userId'],
           'message' => 'Добавил снимок '.$dzz->id,
-          'type' => 'store'
+          'type'    => 'store'
         ]);
         $directory = "files/dzzs/" . str_pad($dzz->id, 32, "0", STR_PAD_LEFT);
         $name      = $file->getClientOriginalName();
-        Storage:: makeDirectory($directory);
+        Storage::makeDirectory($directory);
         $path = Storage::putFileAs($directory, $file, $name);
         $newFile = null;
 
@@ -252,7 +249,7 @@ class TaskService
         UserLog::create([
           'user_id' => $input['userId'],
           'message' => 'Добавил файл '.$newFile->id,
-          'type' => 'store'
+          'type'    => 'store'
         ]);
         TaskData::Create([
           'task_id'      => $taskId,
@@ -264,7 +261,7 @@ class TaskService
         UserLog::create([
           'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
-          'type' => 'store'
+          'type'    => 'store'
         ]);
       }
     }
@@ -287,7 +284,7 @@ class TaskService
         UserLog::create([
           'user_id' => $input['userId'],
           'message' => 'Добавил данные для задачи '.$taskId,
-          'type' => 'store'
+          'type'    => 'store'
         ]);
       }
     }

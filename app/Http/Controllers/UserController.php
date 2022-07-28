@@ -21,6 +21,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Laravel\Fortify\Rules\Password;
@@ -33,7 +34,10 @@ class UserController extends Controller
      * @return \Illuminate\Http\Response
      */
 
-    protected $service;
+    protected $userService;
+    protected $taskService;
+    protected $fileService;
+    protected $groupService;
     /**
      * Display a listing of the resource.
      *
@@ -60,13 +64,12 @@ class UserController extends Controller
         // }
         $users = $this->userService->getAll($request->all());
         return new UserCollection($users);
-
     }
 
     public function auth()
     {
         $user = Auth::user();
-        return new UserResource($user);
+            return new UserResource($user);
     }
     public function checkAuth()
     {
@@ -96,7 +99,8 @@ class UserController extends Controller
         return new UserResource($user);
     }
 
-    public function getLogs($id) {
+    public function getLogs($id)
+    {
         $logs = $this->userService->getLogs($id);
         if ($logs == null) {
             return response()->json([
@@ -106,7 +110,8 @@ class UserController extends Controller
         return new UserLogsCollection($logs);
     }
 
-    public function logout(Request $request) {
+    public function logout(Request $request)
+    {
         $userId = Auth::id();
         Auth::logout();
 
@@ -161,7 +166,8 @@ class UserController extends Controller
             'message' => "User successfully deleted"
         ], 200);
     }
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $input = $request->all();
         Validator::make($input, [
             'firstName' => ['required', 'string', 'max:255'],
@@ -177,262 +183,7 @@ class UserController extends Controller
         ])->validate();
 
         $user = $this->userService->create($input);
-        
+
         return new UserResource($user);
     }
-
-    public function getTasks(Request $request)
-    {
-        $input = $request->all();
-        $input['userId'] = Auth::id();
-        $tasks = $this->taskService->getAll($input);
-        return new TaskCollection($tasks);
-    }
-    public function getTask($id)
-    {
-        $task = $this->taskService->getOneByUser(Auth::id(), $id);
-
-        if ($task == null) {
-            return response()->json([
-                'message' => 'Task Not Found.'
-            ], 404);
-        }
-
-        return new TaskResource($task);
-    }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function createTask(Request $request)
-    {
-        try {
-            print_r($request->all());
-            $input = [
-                'dzzs'    => $request['dzzs'],
-                'planId'  => $request['planId'],
-                'vectors' => $request['vectors'],
-                'files'   => $request['files'],
-                'params'  => $request['params'],
-                'note'    => $request['note'],
-                'links'   => json_decode($request['links']),
-                'userId' => Auth::id()
-            ];
-
-            $this->taskService->post($input);
-
-            return response()->json([
-                'message' => "Task created"
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function deleteTasks(Request $request)
-    {
-        $deletable = [];
-
-        foreach ($request['ids'] as $id) {
-            $res = $this->taskService->isTaskDeletable($id);
-            array_push($deletable, [
-                'id' => $id,
-                'delete' => $res
-            ]);
-        }
-
-        foreach ($deletable as $task) {
-            if ($task['delete']) {
-                $res = $this->taskService->deleteUserTask($task['id']);
-                if ($res == null) {
-                    return response()->json([
-                        'message' => 'Task  not found'
-                    ], 404);
-                }
-            }
-        }
-
-        return response()->json([
-            "deleted" => $deletable
-        ], 200);
-    }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function deleteTask($id)
-    {
-        $res = $this->taskService->deleteUserTask($id);
-
-        if ($res == null) {
-            return response()->json([
-                'message' => 'Task not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'message' => "Task successfully deleted"
-        ], 200);
-    }
-
-
-    public function getFiles(Request $request) {
-    
-        $input = $request->all();
-        $input['userId'] = Auth::id();
-        $files = $this->fileService->getAll($input);
-
-        return new FileCollection($files);
-    }
-
-    public function deleteFile($id)
-    {
-        $res = $this->fileService->deleteUserFile($id);
-
-        if ($res == null) {
-            return response()->json([
-                'message' => 'File not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'message' => "File successfully deleted"
-        ], 200);
-    }
-
-    public function deleteFiles(Request $request) {
-
-        $deletable = [];
-
-        foreach ($request['ids'] as $id) {
-            array_push($deletable, [
-                'id' => $id,
-            ]);
-        }
-
-        
-
-        foreach ($deletable as $file) {
-            $res = $this->fileService->deleteUserFile($file['id']);
-            if ($res == null) {
-                return response()->json([
-                    'message' => 'File  not found'
-                ], 404);
-            }
-        }
-
-        return response()->json([
-            "deleted" => $deletable
-        ], 200);
-    }
-    
-    public function getGroups(Request $request)
-    {
-        $input = $request->all();
-        $groups = null;
-        if ($request->owner) {
-            $input['ownerId'] = Auth::id();
-            $groups = $this->groupService->getAll($input);
-        } else {
-            $input['userId'] = Auth::id();
-            $groups = $this->groupService->getAll($input);
-        }
-        return new GroupCollection($groups);
-    }
-    public function getGroup($id)
-    {
-        $group = $this->groupService->getOneByUser(Auth::id(), $id);
-
-        if ($group == null) {
-            return response()->json([
-                'message' => 'Group Not Found.'
-            ], 404);
-        }
-
-        return new GroupResource($group);
-    }
-    public function getUsersByGroup($groupId, Request $request)
-    {
-        $input = $request->all();
-        $input['groupId'] = $groupId;
-        $users = $this->userService->getAll($input);
-        return new UserCollection($users);
-    }
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function createGroup(Request $request)
-    {
-        try {
-            $dto = [
-                'title'   => $request['title'],
-                'type'    => $request['type'],
-                'ownerId' => Auth::id()
-            ];
-
-            $this->groupService->create($dto);
-
-            return response()->json([
-                'message' => "Group created"
-            ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
-        }
-    }
-
-    public function deleteGroups(Request $request)
-    {
-        $deletable = [];
-
-        foreach ($request['ids'] as $id) {
-            array_push($deletable, [
-                'id' => $id,
-            ]);
-        }
-
-        foreach ($deletable as $group) {
-            $res = $this->groupService->delete($group['id'], Auth::id());
-            if ($res == null) {
-                return response()->json([
-                    'message' => 'Group  not found'
-                ], 404);
-            }
-        }
-
-        return response()->json([
-            "deleted" => $deletable
-        ], 200);
-    }
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function deleteGroup($id)
-    {
-        $res = $this->groupService->delete($id, Auth::id());
-
-        if ($res == null) {
-            return response()->json([
-                'message' => 'Group not found'
-            ], 404);
-        }
-
-        return response()->json([
-            'message' => "Group successfully deleted"
-        ], 200);
-    }
-
 }

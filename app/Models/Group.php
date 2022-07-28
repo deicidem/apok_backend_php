@@ -21,6 +21,7 @@ class Group extends Model
     protected $table = 'groups';
     protected $fillable = [
         'title',
+        'description',
         'type_id',
         'owner_id'
     ];
