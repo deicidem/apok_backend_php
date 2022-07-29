@@ -32,7 +32,7 @@ class TaskService
       return $q->where('title', 'ilike', '%' . $input['title'] . '%');
     });
     $query->when(isset($input['id']), function ($q) use ($input) {
-      return $q->where('id', 'ilike', '%' . $input['id'] . '%');
+      return $q->where('id', $input['id']);
     });
     $query->when(isset($input['date']), function ($q) use ($input) {
       return $q->where('created_at', '>=', $input['date']);
@@ -165,7 +165,7 @@ class TaskService
     
     $taskId = $task->id;
 
-    if ($input['params'] != null) {
+    if (isset($input['params'])) {
       foreach ($input['params'] as $key => $param) {
         TaskData::Create([
           'task_id'      => $taskId,
@@ -182,7 +182,7 @@ class TaskService
       }
     }
 
-    if ($input['dzzs'] != null) {
+    if (isset($input['dzzs'])) {
       foreach ($input['dzzs'] as $key => $dzzId) {
         $file = Dzz::Find($dzzId)->directory;
 
@@ -201,7 +201,7 @@ class TaskService
       }
     }
 
-    if ($input['files'] != null) {
+    if (isset($input['files'])) {
       foreach ($input['files'] as $key => $file) {
         $dzz =  Dzz::Create([
           'name' => 'user dzz',
@@ -268,7 +268,7 @@ class TaskService
 
 
 
-    if ($input['vectors'] != null) {
+    if (isset($input['vectors'])) {
       foreach ($input['vectors'] as $key => $vector) {
         $json    = json_decode($vector, true);
         $polygon = json_encode(\GeoJson\GeoJson::jsonUnserialize($json)

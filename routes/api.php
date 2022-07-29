@@ -88,14 +88,20 @@ Route::resource('groups', GroupController::class);
 
 Route::post('groups/{group}/users', [GroupController::class, 'addUsers']);
 Route::get('group-types', [GroupController::class, 'getTypes']);
+Route::delete('groups/{group}/users/{user}', [GroupController::class, 'excludeUser']);
 
 Route::post('users/{user}/block', [UserController::class, 'block']);
 Route::post('users/{user}/unblock', [UserController::class, 'unblock']);
 Route::get('users/{user}/logs', [UserController::class, 'getLogs']);
+        
 Route::resource('tasks', TaskController::class);
 Route::resource('files', FileController::class);
+
 Route::get('user/notifications', [UserNotificationsController::class, 'index']);
+Route::put('user/notifications/{notification}', [UserNotificationsController::class, 'update']);
 Route::get('user/notifications/unread-count', [UserNotificationsController::class, 'unreadCount']);
+Route::delete('user/notifications/{notification}', [UserNotificationsController::class, 'destroy']);
+
 Route::group(['middleware' => ['auth:sanctum', 'not-blocked']], function () {
     Route::get('download', [FileController::class, 'download']);
 

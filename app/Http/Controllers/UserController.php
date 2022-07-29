@@ -53,16 +53,20 @@ class UserController extends Controller
 
     public function index(Request $request)
     {
-        $users = null;
-
-        // if ($request->has('groupId'))  {
-        //     $users = $this->userService->getAllByGroup($request->groupId);
-        // }else  if ($request->has('search')) {
-        //     $users = $this->userService->getBySearch($request->search);
-        // } else {
-        //     $users = $this->userService->getAll();
-        // }
-        $users = $this->userService->getAll($request->all());
+        $input = Validator::make($request->all(), [
+            'groupId'   => ['nullable', 'numeric', 'exists:groups,id'],
+            'size'      => ['nullable', 'numeric'],
+            'page'      => ['nullable', 'numeric'],
+            'desc'      => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy'    => ['nullable', 'string'],
+            'firstName' => ['nullable', 'string'],
+            'lastName'  => ['nullable', 'string'],
+            'email'     => ['nullable', 'string'],
+            'id'        => ['nullable', 'numeric'],
+            'date'      => ['nullable', 'date'],
+            'any'       => ['nullable', 'string'],
+        ])->validate();
+        $users = $this->userService->getAll($input);
         return new UserCollection($users);
     }
 
@@ -171,15 +175,17 @@ class UserController extends Controller
         $input = $request->all();
         Validator::make($input, [
             'firstName' => ['required', 'string', 'max:255'],
-            'lastName' => ['required', 'string', 'max:255'],
-            'email' => [
+            'lastName'  => ['required', 'string', 'max:255'],
+            'email'     => [
                 'required',
                 'string',
                 'email',
                 'max:255',
                 'unique:users',
             ],
-            'password' => ['required', 'string', new Password, 'confirmed'],
+            'password'     => ['required', 'string', new Password, 'confirmed'],
+            'organisation' => ['nullable', 'string', 'max:255'],
+            'phoneNumber'  => ['nullable', 'string', 'max:255'],
         ])->validate();
 
         $user = $this->userService->create($input);

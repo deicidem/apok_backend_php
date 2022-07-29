@@ -40,7 +40,7 @@ class GroupService
     });
 
     $query->when(isset($input['id']), function ($q) use ($input) {
-      return $q->where('id', 'ilike', '%' . $input['id'] . '%');
+      return $q->where('id', $input['id']);
     });
 
     $query->when(isset($input['date']), function ($q) use ($input) {
@@ -142,6 +142,11 @@ class GroupService
   public function update($id, $input)
   {
     $group              = Group::find($id);
+    $group->forceFill([
+      'title'       => $input['title'],
+      'description' => $input['description'],
+      'type_id'     => $input['type']
+    ]);
     $group->title       = $input['title'];
     $group->description = $input['description'];
     $group->type_id     = $input['type'];

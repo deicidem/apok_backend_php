@@ -51,6 +51,17 @@ class UserTasksController extends Controller
     {
         $input = $request->all();
         $input['userId'] = Auth::id();
+        $input = Validator::make($input, [
+            'userId' => ['nullable', 'numeric', 'exists:users,id'],
+            'size'   => ['nullable', 'numeric'],
+            'page'   => ['nullable', 'numeric'],
+            'desc'   => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy' => ['nullable', 'string'],
+            'title'  => ['nullable', 'string'],
+            'id'     => ['nullable', 'numeric'],
+            'date'   => ['nullable', 'date'],
+            'any'    => ['nullable', 'string'],
+        ])->validate();
         $tasks = $this->taskService->getAll($input);
         return new TaskCollection($tasks);
     }
@@ -74,29 +85,30 @@ class UserTasksController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            print_r($request->all());
-            $input = [
-                'dzzs'    => $request['dzzs'],
-                'planId'  => $request['planId'],
-                'vectors' => $request['vectors'],
-                'files'   => $request['files'],
-                'params'  => $request['params'],
-                'note'    => $request['note'],
-                'links'   => json_decode($request['links']),
-                'userId' => Auth::id()
-            ];
-
+        // try {
+            $input = $request->all();
+            $input['userId'] = Auth::id();
+            $input = Validator::make($input,    [
+                'dzzs'    => ['nullable', 'array'],
+                'planId'  => ['required', 'numeric', 'exists:plans,id'],
+                'vectors' => ['nullable', 'array'],
+                'files'   => ['nullable', 'array'],
+                'params'  => ['nullable', 'array'],
+                'note'    => ['nullable', 'string'],
+                'links'   => ['required', 'json'],
+                'userId'  => ['required', 'numeric', 'exists:users,id']
+            ])->validated();
+            $input['links'] = json_decode($input['links']);
             $this->taskService->post($input);
 
             return response()->json([
                 'message' => "Task created"
             ], 201);
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 500);
-        }
+        // } catch (\Exception $e) {
+        //     return response()->json([
+        //         'message' => $e->getMessage()
+        //     ], 500);
+        // }
     }
 
     public function destroyBanch(Request $request)
@@ -145,7 +157,10 @@ class UserTasksController extends Controller
     }
 
     public function update($id, Request $request) {
-        $res = $this->taskService->update($id, $request->all());
+        $input = Validator::make($request->all(), [
+            'note' => ['required', 'string'],
+        ])->validated();
+        $res = $this->taskService->update($id, $input);
 
         if ($res == null) {
             return response()->json([

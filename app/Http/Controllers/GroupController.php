@@ -11,7 +11,10 @@ use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupTypeResource;
 use App\Http\Services\Dto\GroupDto;
 use App\Models\GroupType;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class GroupController extends Controller
 {
@@ -34,7 +37,19 @@ class GroupController extends Controller
 
     public function index(Request $request)
     {
-        $groups = $this->service->getAll($request->all());
+        $input = Validator::make($request->all(), [
+            'ownerId' => ['nullable', 'numeric', 'exists:users,id'],
+            'userId'  => ['nullable', 'numeric', 'exists:users,id'],
+            'size'    => ['nullable', 'numeric'],
+            'page'    => ['nullable', 'numeric'],
+            'desc'    => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy'  => ['nullable', 'string'],
+            'title'   => ['nullable', 'string'],
+            'id'      => ['nullable', 'numeric'],
+            'date'    => ['nullable', 'date'],
+            'any'     => ['nullable', 'string'],
+        ])->validated();
+        $groups = $this->service->getAll($input);
 
         return new GroupCollection($groups);
     }
@@ -49,7 +64,14 @@ class GroupController extends Controller
     {
         $input = $request->all();
         $input['ownerId'] = Auth::id();
-        $group = $this->groupService->create($input);
+        $input = Validator::make($input, [
+            'ownerId'     => ['required', 'numeric', 'exists:users,id'],
+            'title'       => ['required', 'string', 'unique:groups'],
+            'description' => ['required', 'string'],
+            'type'        => ['required', 'numeric', 'exists:group_types,id'],
+        ])->validated();
+        print_r($input);
+        $group = $this->service->create($input);
 
         return response()->json([
             'group' => $group
@@ -73,6 +95,27 @@ class GroupController extends Controller
         }
 
         return new GroupResource($group);
+    }
+
+    public function update($id, Request $request)
+    {
+        $input = Validator::make($request->all(), [
+            'title'       => ['required', Rule::unique('groups')->ignore($id), 'string'],
+            'description' => ['required', 'string'],
+            'type'        => ['required', 'numeric', 'exists:group_types,id'],
+        ])->validated();
+
+        $res = $this->service->update($id, $input);
+
+        if ($res == null) {
+            return response()->json([
+                'message' => 'Group not found'  
+            ], 404);
+        }
+
+        return response()->json([
+            'message' => "Group successfully deleted"
+        ], 200);
     }
 
     /**
@@ -122,5 +165,10 @@ class GroupController extends Controller
     {
         $types = $this->service->getTypes();
         return GroupTypeResource::collection($types);
+    }
+    public function excludeUser($groupId, $userId)
+    {
+        $this->service->removeUser($userId, $groupId);
+        return new JsonResponse(null, 200);
     }
 }

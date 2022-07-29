@@ -52,14 +52,24 @@ class UserGroupsController extends Controller
     public function index(Request $request)
     {
         $input = $request->all();
-        $groups = null;
         if ($request->owner) {
             $input['ownerId'] = Auth::id();
-            $groups = $this->groupService->getAll($input);
         } else {
             $input['userId'] = Auth::id();
-            $groups = $this->groupService->getAll($input);
         }
+        $input = Validator::make($input, [
+            'ownerId' => ['nullable', 'numeric', 'exists:users,id'],
+            'userId'  => ['nullable', 'numeric', 'exists:users,id'],
+            'size'    => ['nullable', 'numeric'],
+            'page'    => ['nullable', 'numeric'],
+            'desc'    => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy'  => ['nullable', 'string'],
+            'title'   => ['nullable', 'string'],
+            'id'      => ['nullable', 'numeric'],
+            'date'    => ['nullable', 'date'],
+            'any'     => ['nullable', 'string'],
+        ])->validate();
+        $groups = $this->groupService->getAll($input);
         return new GroupCollection($groups);
     }
     // public function getGroup($id)
@@ -78,6 +88,19 @@ class UserGroupsController extends Controller
     {
         $input = $request->all();
         $input['groupId'] = $groupId;
+        $input = Validator::make($input, [
+            'groupId'   => ['nullable', 'numeric', 'exists:groups,id'],
+            'size'      => ['nullable', 'numeric'],
+            'page'      => ['nullable', 'numeric'],
+            'desc'      => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy'    => ['nullable', 'string'],
+            'firstName' => ['nullable', 'string'],
+            'lastName'  => ['nullable', 'string'],
+            'email'     => ['nullable', 'string'],
+            'id'        => ['nullable', 'numeric'],
+            'date'      => ['nullable', 'date'],
+            'any'       => ['nullable', 'string'],
+        ])->validate();
         $users = $this->userService->getAll($input);
         return new UserCollection($users);
     }
@@ -92,6 +115,12 @@ class UserGroupsController extends Controller
         try {
             $input = $request->all();
             $input['ownerId'] = Auth::id();
+            $input = Validator::make($input, [
+                'ownerId'     => ['required', 'numeric', 'exists:users,id'],
+                'title'       => ['nullable', 'string', 'unique:groups'],
+                'description' => ['nullable', 'string'],
+                'type'        => ['nullable', 'numeric', 'exists:group_types,id'],
+            ])->validate();
             $this->groupService->create($input);
 
             return response()->json([
@@ -150,7 +179,12 @@ class UserGroupsController extends Controller
 
     public function update($id, Request $request)
     {
-        $res = $this->groupService->update($id, $request->all());
+        $input = Validator::make($request->all(), [
+            'title'       => ['required', Rule::unique('groups')->ignore($id), 'string'],
+            'description' => ['required', 'string'],
+            'type'        => ['required', 'numeric', 'exists:group_types,id'],
+        ])->validated();
+        $res = $this->groupService->update($id, $input);
 
         if ($res == null) {
             return response()->json([

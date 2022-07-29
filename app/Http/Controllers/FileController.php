@@ -10,6 +10,8 @@ use App\Models\File;
 use Illuminate\Contracts\Cache\Store;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class FileController extends Controller
 {
@@ -27,7 +29,18 @@ class FileController extends Controller
      */
     public function index(Request $request)
     {
-        $files = $this->service->getAll($request->all());
+        $input = Validator::make($request->all(), [
+            'userId' => ['nullable', 'numeric', 'exists:users,id'],
+            'size'   => ['nullable', 'numeric'],
+            'page'   => ['nullable', 'numeric'],
+            'desc'   => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy' => ['nullable', 'string'],
+            'name'   => ['nullable', 'string'],
+            'id'     => ['nullable', 'numeric'],
+            'date'   => ['nullable', 'date'],
+            'any'    => ['nullable', 'string'],
+        ])->validated();
+        $files = $this->service->getAll($input);
         return new FileCollection($files);
     }
 
@@ -140,7 +153,7 @@ class FileController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update($id, Request $request)
     {
         try {
             $_FILENAME = "file";
@@ -194,11 +207,15 @@ class FileController extends Controller
         ], 200);
     }
 
-    
+
 
     public function polygon(Request $request)
     {
-        $file = $request->file('file');
+        $input = Validator::make($request->all(), [
+            'file' => ['required', 'file']
+        ])->validated();
+
+        $file = $input['file'];
         $ext = $file->extension();
         if ($ext == "zip") {
             $temp = "temp";
@@ -213,19 +230,19 @@ class FileController extends Controller
                 $zip->close();
             }
 
-                      
 
-            Storage::copy('public/result/preview.json', $temp."/temp.geojson");
+
+            Storage::copy('public/result/preview.json', $temp . "/temp.geojson");
             Storage::delete($filePath);
             $res = null;
-            if (Storage::exists($temp."/temp.geojson")) {
-                $res = Storage::get($temp."/temp.geojson");
-            }  
+            if (Storage::exists($temp . "/temp.geojson")) {
+                $res = Storage::get($temp . "/temp.geojson");
+            }
             // Storage::deleteDirectory($temp);
             return response()->json([
                 'file' => json_decode($res)
             ], 200);
-        } else if ($ext == "json" || $ext == "geojson" ) {
+        } else if ($ext == "json" || $ext == "geojson") {
             $data = $file->openFile()->fread($file->getSize());
             return response()->json([
                 'file' => json_decode($data)
@@ -235,7 +252,6 @@ class FileController extends Controller
                 'message' => "Допустимые расширения файла .json, .geojson, .zip"
             ], 422);
         }
-        
     }
 
     public function download(Request $request)

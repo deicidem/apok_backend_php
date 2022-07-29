@@ -52,9 +52,19 @@ class UserFilesController extends Controller
 
     public function index(Request $request)
     {
-
         $input = $request->all();
         $input['userId'] = Auth::id();
+        $input = Validator::make($input, [
+            'userId' => ['nullable', 'numeric', 'exists:users,id'],
+            'size'   => ['nullable', 'numeric'],
+            'page'   => ['nullable', 'numeric'],
+            'desc'   => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy' => ['nullable', 'string'],
+            'name'   => ['nullable', 'string'],
+            'id'     => ['nullable', 'numeric'],
+            'date'   => ['nullable', 'date'],
+            'any'    => ['nullable', 'string'],
+        ])->validate();
         $files = $this->fileService->getAll($input);
 
         return new FileCollection($files);

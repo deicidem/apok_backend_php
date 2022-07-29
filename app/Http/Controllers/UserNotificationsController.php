@@ -52,14 +52,12 @@ class UserNotificationsController extends Controller
     {
         $input = $request->all();
         $input['userId'] = Auth::id();
+        $input = Validator::make($input, [
+            'userId'  => ['nullable', 'numeric', 'exists:users,id'],
+            'size'    => ['nullable', 'numeric'],
+            'page'    => ['nullable', 'numeric'],
+        ])->validate();
 
-        // if ($request->has('groupId'))  {
-        //     $users = $this->service->getAllByGroup($request->groupId);
-        // }else  if ($request->has('search')) {
-        //     $users = $this->service->getBySearch($request->search);
-        // } else {
-        //     $users = $this->service->getAll();
-        // }
         $notifications = $this->service->getAll($input);
         return new NotificationCollection($notifications);
     }
@@ -68,14 +66,21 @@ class UserNotificationsController extends Controller
     }
     public function destroy($id)
     {
-        if ($this->service->delete($id) == null) {
+        if ($this->service->delete($id, Auth::id()) == null) {
             return response()->json([
                 'message' => 'User not found'
             ], 404);
         }
 
         return response()->json([
-            'message' => "User successfully deleted"
+            'message' => "notification successfully deleted"
         ], 200);
+    }
+    public function update($notificationId) {
+        if ($this->service->markAsRead($notificationId, Auth::id())) {
+            return new JsonResponse(null, 200);
+        }
+        return new JsonResponse(null, 500);
+
     }
 }

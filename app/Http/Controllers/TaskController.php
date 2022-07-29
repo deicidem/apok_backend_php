@@ -16,6 +16,8 @@ use App\Models\Dzz;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
 
 class TaskController extends Controller
 {
@@ -32,7 +34,18 @@ class TaskController extends Controller
 
     public function index(Request $request)
     {
-        $tasks = $this->service->getAll($request->all()); 
+        $input = Validator::make($request->all(), [
+            'userId' => ['nullable', 'numeric', 'exists:users,id'],
+            'size'   => ['nullable', 'numeric'],
+            'page'   => ['nullable', 'numeric'],
+            'desc'   => ['nullable', Rule::in('true', 'false', '1', '0', 1, 0, true, false)],
+            'sortBy' => ['nullable', 'string'],
+            'title'  => ['nullable', 'string'],
+            'id'     => ['nullable', 'numeric'],
+            'date'   => ['nullable', 'date'],
+            'any'    => ['nullable', 'string'],
+        ])->validate();
+        $tasks = $this->service->getAll($input); 
 
         return new TaskCollection($tasks);
     }

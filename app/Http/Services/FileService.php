@@ -26,7 +26,7 @@ class FileService
       return $q->where('name', 'ilike', '%' . $input['name'] . '%');
     });
     $query->when(isset($input['id']), function ($q) use ($input) {
-      return $q->where('id', 'ilike', '%' . $input['id'] . '%');
+      return $q->where('id', $input['id']);
     });
     $query->when(isset($input['date']), function ($q) use ($input) {
       return $q->where('created_at', '>=', $input['date']);
